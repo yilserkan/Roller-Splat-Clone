@@ -14,6 +14,8 @@ namespace Player
 
         private bool m_IsTouching;
 
+        public static event Action<Vector2> OnPlayerSwipe; 
+
 
         private bool IsTouching => Input.touchCount > 0;
         private bool TouchingStarted => m_IsTouching;
@@ -38,8 +40,8 @@ namespace Player
 
                 if (PassedThreshold(touchPosition))
                 {
-                    FindMoveDirection(touchPosition);
-                    
+                    Vector2 swipeDir = FindMoveDirection(touchPosition);
+                    OnPlayerSwipe?.Invoke(swipeDir);
                 }
 
                 m_LastTouchPosition = touchPosition;
@@ -62,7 +64,7 @@ namespace Player
             {
                 swipeDir = new Vector2( 0,swipeDir.y).normalized;
             }
-            Debug.Log(swipeDir);
+            //Debug.Log(swipeDir);
             return swipeDir;
         }
         
