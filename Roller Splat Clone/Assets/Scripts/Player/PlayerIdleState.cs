@@ -10,12 +10,19 @@ namespace Player
         {
             // Enable Player Inputs
             Debug.Log("Enable Player Inputs");
+            stateMachine.EnablePlayerInputs();
         }
-        
+
+        public override void Tick(PlayerStateMachine stateMachine)
+        {
+            base.Tick(stateMachine);
+        }
+
         public override void OnExit(PlayerStateMachine stateMachine)
         {
             // Disable Player Inputs
             Debug.Log("Disable Player Inputs");
+            stateMachine.DisablePlayerInputs();
         }
         
     }

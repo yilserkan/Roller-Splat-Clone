@@ -15,7 +15,10 @@ namespace Player
     public class PlayerStateMachine : MonoBehaviour
     {
         [SerializeField] private PlayerStates initialState;
-
+        [SerializeField] private PlayerInputSystem inputSystem;
+        
+        [SerializeField] private float maxDistance;
+        
         private PlayerStates m_CurrentPlayerState = PlayerStates.None;
         private PlayerBaseStat m_CurrentBaseState;
         private PlayerMoveState m_PlayerMoveState;
@@ -25,16 +28,15 @@ namespace Player
 
         public Vector2 SwipeDir
         {
-            get
-            {
-                return m_swipeDir;
-            }
-            private set
-            {
-                m_swipeDir = value;
-            }
+            get { return m_swipeDir; }
+            private set { m_swipeDir = value; }
         }
-
+        
+        public float MaxDistance
+        {
+            get { return maxDistance; }
+        }
+        
         public float DeltaTime => Time.deltaTime;
         
         private Dictionary<PlayerStates, PlayerBaseStat> m_State = 
@@ -98,5 +100,15 @@ namespace Player
             SwitchState(PlayerStates.Move);
         }
 
+        public void EnablePlayerInputs()
+        {
+            inputSystem.enabled = true;
+        }
+
+        public void DisablePlayerInputs()
+        {
+            inputSystem.ResetTouchStartPosition();
+            inputSystem.enabled = false;
+        }
     }
 }

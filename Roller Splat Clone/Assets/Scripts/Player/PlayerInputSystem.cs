@@ -80,5 +80,11 @@ namespace Player
         {
             m_StartTouchPosition = touchPos;
         }
+
+        public void ResetTouchStartPosition()
+        {
+            SetIsTouching(false);
+            m_StartTouchPosition = Vector2.zero;
+        }
     }
 }
