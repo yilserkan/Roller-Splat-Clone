@@ -12,11 +12,7 @@ namespace Player
             Debug.Log("Enable Player Inputs");
             stateMachine.EnablePlayerInputs();
         }
-
-        public override void Tick(PlayerStateMachine stateMachine)
-        {
-            base.Tick(stateMachine);
-        }
+        
 
         public override void OnExit(PlayerStateMachine stateMachine)
         {

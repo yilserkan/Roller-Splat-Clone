@@ -17,22 +17,50 @@ namespace Player
       
         }
 
-        public override void Tick(PlayerStateMachine stateMachine)
+        public override void OnFixedUpdate(PlayerStateMachine stateMachine)
         {
-            passedTime += stateMachine.DeltaTime;
-            if (passedTime > testTime)
+            
+            MovePlayer();
+            RotatePlayer();
+            CheckWallCollision();
+            CheckGroundCollision();
+
+
+            void MovePlayer()
             {
-                stateMachine.SwitchState(PlayerStates.Idle);
+                stateMachine.transform.Translate( stateMachine.MoveSpeed* stateMachine.DeltaTime*stateMachine.SwipeDir, Space.World);
             }
 
-            Vector3 raycastDir = stateMachine.transform.position + new Vector3(stateMachine.SwipeDir.x, 0, stateMachine.SwipeDir.y);
-            
-            if (Physics.Raycast(stateMachine.transform.position, raycastDir,stateMachine.MaxDistance))
+            void RotatePlayer()
             {
-                Debug.Log("Hit with Wall");
+                Vector3 rotateAxis = Vector3.Cross( Vector3.up,stateMachine.SwipeDir);
+                stateMachine.transform.Rotate(rotateAxis,stateMachine.RotateAngle,Space.World);
             }
             
-            Debug.DrawLine(stateMachine.transform.position, raycastDir,Color.red,testTime);
+            void CheckWallCollision()
+            {
+                Vector3 raycastDir = stateMachine.transform.position + stateMachine.SwipeDir;
+            
+                if (Physics.Raycast(stateMachine.transform.position, raycastDir,stateMachine.MaxDistance))
+                {
+                    Debug.Log("Hit with Wall");
+                    stateMachine.SwitchState(PlayerStates.Idle);
+                }
+                Debug.DrawLine(stateMachine.transform.position, raycastDir,Color.red,testTime);
+            }
+
+            void CheckGroundCollision()
+            {
+                Vector3 groundRaycastDir = stateMachine.transform.position + Vector3.down;
+            
+                if (Physics.Raycast(stateMachine.transform.position, groundRaycastDir,stateMachine.MaxDistance))
+                {
+                   
+                }
+            
+                Debug.DrawLine(stateMachine.transform.position, groundRaycastDir,Color.red,testTime);
+            }
+            
         }
 
         public override void OnExit(PlayerStateMachine stateMachine)

@@ -596,7 +596,7 @@ SphereCollider:
   m_GameObject: {fileID: 552391490}
   m_Material: {fileID: 0}
   m_IsTrigger: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 2
   m_Radius: 0.5
   m_Center: {x: 0, y: 0, z: 0}
@@ -677,7 +677,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 599031591}
   m_LocalRotation: {x: -0, y: 0.70710677, z: -0, w: 0.7071068}
-  m_LocalPosition: {x: 0.5500002, y: 0.5, z: 0.37999976}
+  m_LocalPosition: {x: 4.55, y: 0.5, z: 0.37999976}
   m_LocalScale: {x: 11.329, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -857,7 +857,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   initialState: 1
   inputSystem: {fileID: 975984299}
-  maxDistance: 0
+  raycastMultiplicator: 0.5
+  moveSpeed: 5
+  rotateAngle: 5
+  maxDistance: 0.5
 --- !u!1 &1088720762
 GameObject:
   m_ObjectHideFlags: 0
@@ -1206,7 +1209,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1930652070}
   m_LocalRotation: {x: -0, y: 0.70710677, z: -0, w: 0.7071068}
-  m_LocalPosition: {x: -1.5, y: 0.5, z: 0.3800001}
+  m_LocalPosition: {x: -5.5, y: 0.5, z: 0.3800001}
   m_LocalScale: {x: 11.329, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

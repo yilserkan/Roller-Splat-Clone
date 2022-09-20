@@ -16,8 +16,11 @@ namespace Player
     {
         [SerializeField] private PlayerStates initialState;
         [SerializeField] private PlayerInputSystem inputSystem;
+        [SerializeField] private float raycastMultiplicator = 0.5f;
+        [SerializeField] private float moveSpeed;
+        [SerializeField] private float rotateAngle;
         
-        [SerializeField] private float maxDistance;
+        [SerializeField] private float maxDistance = 0.5f;
         
         private PlayerStates m_CurrentPlayerState = PlayerStates.None;
         private PlayerBaseStat m_CurrentBaseState;
@@ -26,15 +29,38 @@ namespace Player
 
         private Vector2 m_swipeDir;
 
-        public Vector2 SwipeDir
+        public Vector3 SwipeDir
         {
-            get { return m_swipeDir; }
-            private set { m_swipeDir = value; }
+            get { return  new Vector3(m_swipeDir.x, 0, m_swipeDir.y); }
+            private set { m_swipeDir =  value; }
         }
         
         public float MaxDistance
         {
             get { return maxDistance; }
+        }
+
+        public float RotateAngle
+        {
+            get
+            {
+                return rotateAngle;
+            }
+        }
+        public float RaycastMultiplicator
+        {
+            get
+            {
+                return raycastMultiplicator;
+            }
+        }
+
+        public float MoveSpeed
+        {
+            get
+            {
+                return moveSpeed;
+            }
         }
         
         public float DeltaTime => Time.deltaTime;
@@ -63,9 +89,14 @@ namespace Player
 
         private void Update()
         {
-            Tick();
+            OnUpdate();
         }
 
+        private void FixedUpdate()
+        {
+            OnFixedUpdate();
+        }
+        
         private void OnCollisionEnter(Collision collision)
         {
             OnCollided(collision);
@@ -89,10 +120,16 @@ namespace Player
             m_CurrentBaseState?.OnCollisionEnter(this, collision);
         }
 
-        private void Tick()
+        private void OnUpdate()
         {
-            m_CurrentBaseState?.Tick(this);
+            m_CurrentBaseState?.OnUpdate(this);
         }
+        
+        private void OnFixedUpdate()
+        {
+            m_CurrentBaseState?.OnFixedUpdate(this);
+        }
+
         
         private void HandleOnPlayerSwipe(Vector2 swipeDir)
         {
