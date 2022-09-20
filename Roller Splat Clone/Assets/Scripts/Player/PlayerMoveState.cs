@@ -22,9 +22,6 @@ namespace Player
             
             MovePlayer();
             RotatePlayer();
-            CheckWallCollision();
-            CheckGroundCollision();
-
 
             void MovePlayer()
             {
@@ -37,29 +34,7 @@ namespace Player
                 stateMachine.transform.Rotate(rotateAxis,stateMachine.RotateAngle,Space.World);
             }
             
-            void CheckWallCollision()
-            {
-                Vector3 raycastDir = stateMachine.transform.position + stateMachine.SwipeDir;
-            
-                if (Physics.Raycast(stateMachine.transform.position, raycastDir,stateMachine.MaxDistance))
-                {
-                    Debug.Log("Hit with Wall");
-                    stateMachine.SwitchState(PlayerStates.Idle);
-                }
-                Debug.DrawLine(stateMachine.transform.position, raycastDir,Color.red,testTime);
-            }
-
-            void CheckGroundCollision()
-            {
-                Vector3 groundRaycastDir = stateMachine.transform.position + Vector3.down;
-            
-                if (Physics.Raycast(stateMachine.transform.position, groundRaycastDir,stateMachine.MaxDistance))
-                {
-                   
-                }
-            
-                Debug.DrawLine(stateMachine.transform.position, groundRaycastDir,Color.red,testTime);
-            }
+          
             
         }
 
