@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Player;
 using UnityEngine;
 
 namespace GridSystem
@@ -14,15 +15,30 @@ namespace GridSystem
         [SerializeField] private GameObject prefab;
         
         private Grid m_Grid;
-        
+
+        private void OnEnable()
+        {
+            PlayerStateMachine.OnPlayerEnterMoveState += HandleOnPlayerEnterMoveState;
+        }
+
+        private void OnDisable()
+        {
+            PlayerStateMachine.OnPlayerEnterMoveState += HandleOnPlayerEnterMoveState;
+        }
+
+        private void HandleOnPlayerEnterMoveState(Vector3 worldPos, Vector2Int dir)
+        {
+            m_Grid.FindLastPoint(m_Grid.GetCoordinatesFromWorldPos(worldPos) , dir);
+        }
+
         private void Start()
         {
             m_Grid = new Grid(heigth, width, cellSize, gridStartPos);
             CreateGrid();
+            Debug.Log(m_Grid.GetWorldPosFromCoordinates(new Vector2Int(1, 1)));
             m_Grid.FindNeighbors();
+            
         }
-
-        
         
         private void CreateGrid()
         {
@@ -35,8 +51,6 @@ namespace GridSystem
                 }
             }
         }
-
-    
         
     }
 }

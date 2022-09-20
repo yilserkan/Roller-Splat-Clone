@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace GridSystem
@@ -57,7 +58,14 @@ namespace GridSystem
             int coordinateX = Mathf.RoundToInt((worldPosition.x - m_GridStartPosition.x )/ m_Cellsize);
             int coordinateY = Mathf.RoundToInt((worldPosition.z -m_GridStartPosition.z)/ m_Cellsize);
 
-            return new Vector2Int(coordinateX, coordinateY);
+            Vector2Int coordinate = new Vector2Int(coordinateX, coordinateY);
+            
+            if (m_Grid.ContainsKey(coordinate))
+            {
+                return coordinate;
+            }
+
+            return new Vector2Int(0, 0);
         }
 
         public Tile GetTile(Vector2Int coordinates)
@@ -114,6 +122,21 @@ namespace GridSystem
                 Debug.Log("----------------");
             }
         }
+
+        public void FindLastPoint(Vector2Int startCoordinate, Vector2Int moveDir)
+        {
+            var dir = m_Directions.FirstOrDefault(x => x.Value == moveDir).Key;
+
+            Vector2Int currentCoordinate = startCoordinate;
+            
+            while (m_Grid[currentCoordinate].Neigbors[dir] != null || !m_Grid[currentCoordinate].IsBlocked)
+            {
+                Debug.Log($"Way : {currentCoordinate}");
+                currentCoordinate = m_Grid[currentCoordinate].Neigbors[dir].Coordinates;
+            }
+            Debug.Log($"Way : {currentCoordinate}");
+        }
+        //Listeye ceir
     }
 
 }

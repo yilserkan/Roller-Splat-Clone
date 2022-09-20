@@ -19,7 +19,6 @@ namespace Player
         [SerializeField] private float raycastMultiplicator = 0.5f;
         [SerializeField] private float moveSpeed;
         [SerializeField] private float rotateAngle;
-        
         [SerializeField] private float maxDistance = 0.5f;
         
         private PlayerStates m_CurrentPlayerState = PlayerStates.None;
@@ -27,14 +26,14 @@ namespace Player
         private PlayerMoveState m_PlayerMoveState;
         private PlayerMoveState m_PlayerStopState;
 
-        private Vector2 m_swipeDir;
+        private Vector2Int m_swipeDir;
 
-        public Vector3 SwipeDir
+        public Vector2Int SwipeDir
         {
-            get { return  new Vector3(m_swipeDir.x, 0, m_swipeDir.y); }
-            private set { m_swipeDir =  value; }
+            get { return  m_swipeDir; }
+            private set { m_swipeDir = value; }
         }
-        
+   
         public float MaxDistance
         {
             get { return maxDistance; }
@@ -64,7 +63,11 @@ namespace Player
         }
         
         public float DeltaTime => Time.deltaTime;
-        
+
+        public static event Action<Vector3, Vector2Int> OnPlayerEnterMoveState;
+
+        public void InvokeOnPlayerEnterMoveState() => OnPlayerEnterMoveState?.Invoke(transform.position,SwipeDir);
+
         private Dictionary<PlayerStates, PlayerBaseStat> m_State = 
             new Dictionary<PlayerStates, PlayerBaseStat>()
         {
@@ -84,6 +87,7 @@ namespace Player
         
         void Start()
         {
+            transform.position = Vector3.zero;
             SwitchState(initialState);
         }
 
@@ -131,7 +135,7 @@ namespace Player
         }
 
         
-        private void HandleOnPlayerSwipe(Vector2 swipeDir)
+        private void HandleOnPlayerSwipe(Vector2Int swipeDir)
         {
             SwipeDir = swipeDir;
             SwitchState(PlayerStates.Move);

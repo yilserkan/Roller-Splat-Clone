@@ -14,7 +14,7 @@ namespace Player
 
         private bool m_IsTouching;
 
-        public static event Action<Vector2> OnPlayerSwipe; 
+        public static event Action<Vector2Int> OnPlayerSwipe; 
 
 
         private bool IsTouching => Input.touchCount > 0;
@@ -40,7 +40,7 @@ namespace Player
 
                 if (PassedThreshold(touchPosition))
                 {
-                    Vector2 swipeDir = FindMoveDirection(touchPosition);
+                    Vector2Int swipeDir = FindMoveDirection(touchPosition);
                     OnPlayerSwipe?.Invoke(swipeDir);
                 }
 
@@ -52,7 +52,7 @@ namespace Player
             }
         }
 
-        private Vector2 FindMoveDirection(Vector2 touchPos)
+        private Vector2Int FindMoveDirection(Vector2 touchPos)
         {
             Vector2 swipeDir = (touchPos - m_StartTouchPosition).normalized;
 
@@ -65,7 +65,8 @@ namespace Player
                 swipeDir = new Vector2( 0,swipeDir.y).normalized;
             }
             //Debug.Log(swipeDir);
-            return swipeDir;
+            return new Vector2Int(Mathf.RoundToInt(
+                swipeDir.x), Mathf.RoundToInt(swipeDir.y));
         }
         
         private void SetIsTouching(bool value)

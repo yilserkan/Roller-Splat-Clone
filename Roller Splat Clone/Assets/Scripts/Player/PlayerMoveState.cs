@@ -14,7 +14,7 @@ namespace Player
         {
             // Move Ball in dir 
             Debug.Log($"Move Ball in direction {stateMachine.SwipeDir}");
-      
+            stateMachine.InvokeOnPlayerEnterMoveState();
         }
 
         public override void OnFixedUpdate(PlayerStateMachine stateMachine)
@@ -25,17 +25,14 @@ namespace Player
 
             void MovePlayer()
             {
-                stateMachine.transform.Translate( stateMachine.MoveSpeed* stateMachine.DeltaTime*stateMachine.SwipeDir, Space.World);
+                //stateMachine.transform.Translate( stateMachine.MoveSpeed* stateMachine.DeltaTime*stateMachine.SwipeDir, Space.World);
             }
 
             void RotatePlayer()
             {
-                Vector3 rotateAxis = Vector3.Cross( Vector3.up,stateMachine.SwipeDir);
-                stateMachine.transform.Rotate(rotateAxis,stateMachine.RotateAngle,Space.World);
+                //Vector3 rotateAxis = Vector3.Cross( Vector3.up,stateMachine.SwipeDir);
+                //stateMachine.transform.Rotate(rotateAxis,stateMachine.RotateAngle,Space.World);
             }
-            
-          
-            
         }
 
         public override void OnExit(PlayerStateMachine stateMachine)

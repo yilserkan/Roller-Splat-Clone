@@ -20,6 +20,7 @@ namespace GridSystem
         public Tile(Vector2Int coordinates)
         {
             Coordinates = coordinates;
+            IsBlocked = false;
             Neigbors = new Dictionary<Neighbors, Tile>()
             {
                 { Neighbors.Up, null },
