@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Player;
+using Unity.VisualScripting;
 using UnityEngine;
 
 namespace GridSystem
@@ -20,7 +21,9 @@ namespace GridSystem
         
         private Dictionary<Vector2Int, Tile> m_Grid = new Dictionary<Vector2Int, Tile>();
 
-        private Dictionary<Neighbors, Vector2Int> m_Directions = new Dictionary<Neighbors, Vector2Int>()
+        private LevelGenerator m_LevelGenerator;
+        
+        public static Dictionary<Neighbors, Vector2Int> m_Directions = new Dictionary<Neighbors, Vector2Int>()
         {
             { Neighbors.Up, new Vector2Int(0, 1) },
             { Neighbors.Down, new Vector2Int(0, -1) },
@@ -40,8 +43,10 @@ namespace GridSystem
         
         private void Start()
         {
+           
             CreateGrid();
-            
+            m_LevelGenerator = new LevelGenerator(width, height, m_Grid);
+            m_LevelGenerator.GenerateRandomLevel();
         }
 
         private void CreateGrid()
@@ -53,11 +58,14 @@ namespace GridSystem
                     Vector2Int coordinates = new Vector2Int(x, y);
                     Vector3 worldPos = GetWorldPosFromCoordinates(coordinates);
                     Tile tile = Instantiate(prefab, worldPos, Quaternion.identity,transform).GetComponent<Tile>();
+                    tile.gameObject.name = $"({coordinates.x},{coordinates.y})";
                     tile.Init(coordinates,worldPos);
                     m_Grid.Add(coordinates,tile);
                 }
             }
             FindNeighbors();
+            ResetAllTiles();
+           
         }
         
         public Vector3 GetWorldPosition(int x, int y)
@@ -110,7 +118,7 @@ namespace GridSystem
                 }
             }
 
-            PrintNeighbors();
+            //PrintNeighbors();
         }
 
         private void AddNeighbors(Vector2Int coordinates)
@@ -162,6 +170,15 @@ namespace GridSystem
             return path;
         }
 
+        public void ResetAllTiles()
+        {
+            foreach (var tile in m_Grid)
+            {
+                tile.Value.IsBlocked = true;
+                tile.Value.IsColored = false;
+            }
+        }
+        
         private void HandleOnPlayerEnterMoveState(Vector3 worldPos, Vector2Int dir)
         {
             List<Tile> path = FindPlayerPath(GetCoordinatesFromWorldPos(worldPos) , dir);

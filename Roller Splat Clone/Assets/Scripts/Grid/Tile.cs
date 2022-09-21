@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace GridSystem
@@ -15,7 +16,7 @@ namespace GridSystem
 
     {
         public Vector2Int Coordinates;
-        public Vector3 worldPosition;
+        public Vector3 WorldPosition;
         public bool IsBlocked;
         public bool IsColored;
         public Dictionary<Neighbors, Tile> Neigbors;
@@ -25,7 +26,7 @@ namespace GridSystem
         public void Init(Vector2Int coordinates, Vector3 worldPos)
         {
             Coordinates = coordinates;
-            worldPosition = worldPos;
+            WorldPosition = worldPos;
             m_MeshRenderer = GetComponent<MeshRenderer>();
             IsBlocked = false;
             IsColored = false;
@@ -41,6 +42,18 @@ namespace GridSystem
         public void ColorTile(Color color)
         {
             m_MeshRenderer.material.color = color;
+        }
+
+        private void Update()
+        {
+            if (IsBlocked)
+            {
+                m_MeshRenderer.material.color = Color.red;
+            }
+            else
+            {
+                m_MeshRenderer.material.color = Color.green;
+            }
         }
     }
 }

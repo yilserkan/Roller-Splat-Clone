@@ -8,10 +8,8 @@ namespace Player
 {
     public class PlayerMoveState : PlayerBaseStat
     {
-        private float passedTime = 0;
-        private float testTime = 2f;
         private int m_CurrentPathIndex;
-        
+  
         public override void OnEnter(PlayerStateMachine stateMachine)
         {
             // Move Ball in dir 
@@ -35,7 +33,7 @@ namespace Player
             {
                 //stateMachine.transform.Translate( stateMachine.MoveSpeed* stateMachine.DeltaTime*stateMachine.SwipeDir, Space.World);
                 Tile targetTile = stateMachine.Path[m_CurrentPathIndex];
-                Vector3 targetPos = targetTile.worldPosition;
+                Vector3 targetPos = targetTile.WorldPosition;
                 targetPos.y = stateMachine.transform.position.y;
                 stateMachine.transform.position = Vector3.MoveTowards(stateMachine.transform.position, targetPos,
                     stateMachine.DeltaTime * stateMachine.MoveSpeed);
@@ -46,7 +44,6 @@ namespace Player
                     
                     if (stateMachine.Path.Count > m_CurrentPathIndex+1)
                     {
-                        targetTile.ColorTile(Color.green);
                         m_CurrentPathIndex++;
                         Debug.Log(m_CurrentPathIndex);
                     }

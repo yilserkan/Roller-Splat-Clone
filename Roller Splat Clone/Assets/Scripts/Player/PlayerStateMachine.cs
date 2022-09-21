@@ -22,7 +22,7 @@ namespace Player
         [SerializeField] private float moveSpeed;
         [SerializeField] private float rotateAngle;
         [SerializeField] private float maxDistance = 0.5f;
-        
+
         private PlayerStates m_CurrentPlayerState = PlayerStates.None;
         private PlayerBaseStat m_CurrentBaseState;
         private PlayerMoveState m_PlayerMoveState;
