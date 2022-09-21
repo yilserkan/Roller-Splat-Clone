@@ -52,7 +52,7 @@ namespace GridSystem
                 {
                     Vector2Int coordinates = new Vector2Int(x, y);
                     Vector3 worldPos = GetWorldPosFromCoordinates(coordinates);
-                    Tile tile = Instantiate(prefab,worldPos , Quaternion.identity).GetComponent<Tile>();
+                    Tile tile = Instantiate(prefab, worldPos, Quaternion.identity,transform).GetComponent<Tile>();
                     tile.Init(coordinates,worldPos);
                     m_Grid.Add(coordinates,tile);
                 }

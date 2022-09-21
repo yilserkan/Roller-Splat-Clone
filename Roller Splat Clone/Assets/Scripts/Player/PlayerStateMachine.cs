@@ -16,7 +16,6 @@ namespace Player
     
     public class PlayerStateMachine : MonoBehaviour
     {
-        [SerializeField] private GridManager gridManager;
         [SerializeField] private PlayerStates initialState;
         [SerializeField] private PlayerInputSystem inputSystem;
         [SerializeField] private float raycastMultiplicator = 0.5f;
