@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using GridSystem;
 using UnityEngine;
 
 namespace Player
@@ -14,6 +15,7 @@ namespace Player
     
     public class PlayerStateMachine : MonoBehaviour
     {
+        [SerializeField] private GridManager gridManager;
         [SerializeField] private PlayerStates initialState;
         [SerializeField] private PlayerInputSystem inputSystem;
         [SerializeField] private float raycastMultiplicator = 0.5f;
@@ -25,15 +27,27 @@ namespace Player
         private PlayerBaseStat m_CurrentBaseState;
         private PlayerMoveState m_PlayerMoveState;
         private PlayerMoveState m_PlayerStopState;
-
+        
         private Vector2Int m_swipeDir;
-
+        private List<Vector3> m_Path;
         public Vector2Int SwipeDir
         {
             get { return  m_swipeDir; }
             private set { m_swipeDir = value; }
         }
-   
+
+        public List<Vector3> Path
+        {
+            get
+            {
+                return m_Path;
+            }
+            set
+            {
+                m_Path = value;
+            }
+        }
+
         public float MaxDistance
         {
             get { return maxDistance; }
@@ -78,16 +92,18 @@ namespace Player
         private void OnEnable()
         {
             PlayerInputSystem.OnPlayerSwipe += HandleOnPlayerSwipe;
+            GridManager.OnFoundPlayerPath += HandleOnFoundPlayerPath;
         }
-
+        
         private void OnDisable()
         {
             PlayerInputSystem.OnPlayerSwipe -= HandleOnPlayerSwipe;
+            GridManager.OnFoundPlayerPath -= HandleOnFoundPlayerPath;
         }
         
         void Start()
         {
-            transform.position = Vector3.zero;
+            transform.position = new Vector3(0,1,0);
             SwitchState(initialState);
         }
 
@@ -139,6 +155,11 @@ namespace Player
         {
             SwipeDir = swipeDir;
             SwitchState(PlayerStates.Move);
+        }
+
+        private void HandleOnFoundPlayerPath(List<Vector3> path)
+        {
+            Path = path;
         }
 
         public void EnablePlayerInputs()

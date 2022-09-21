@@ -9,29 +9,57 @@ namespace Player
     {
         private float passedTime = 0;
         private float testTime = 2f;
-
+        private int m_CurrentPathIndex;
+        
         public override void OnEnter(PlayerStateMachine stateMachine)
         {
             // Move Ball in dir 
             Debug.Log($"Move Ball in direction {stateMachine.SwipeDir}");
             stateMachine.InvokeOnPlayerEnterMoveState();
+            m_CurrentPathIndex = 0;
         }
 
         public override void OnFixedUpdate(PlayerStateMachine stateMachine)
         {
+            if (stateMachine.Path.Count == 0)
+            {
+              stateMachine.SwitchState(PlayerStates.Idle);
+              return;
+            }
             
             MovePlayer();
             RotatePlayer();
-
+            
             void MovePlayer()
             {
                 //stateMachine.transform.Translate( stateMachine.MoveSpeed* stateMachine.DeltaTime*stateMachine.SwipeDir, Space.World);
+                Vector3 targetPos = stateMachine.Path[m_CurrentPathIndex];
+                targetPos.y = stateMachine.transform.position.y;
+                stateMachine.transform.position = Vector3.MoveTowards(stateMachine.transform.position, targetPos,
+                    stateMachine.DeltaTime * stateMachine.MoveSpeed);
+                
+                if (Vector3.Distance(stateMachine.transform.position, targetPos) < 0.1)
+                {
+                    if (stateMachine.Path.Count > m_CurrentPathIndex+1)
+                    {
+                        m_CurrentPathIndex++;
+                        Debug.Log(m_CurrentPathIndex);
+                        Debug.Log("Count" + stateMachine.Path.Count);
+                    }
+                    else
+                    {
+                        Debug.Log("Switch State");
+                        stateMachine.SwitchState(PlayerStates.Idle);
+                    }  
+                    //Debug.Log($"Moving to {m_CurrentPathIndex}");
+                }
             }
 
             void RotatePlayer()
             {
-                //Vector3 rotateAxis = Vector3.Cross( Vector3.up,stateMachine.SwipeDir);
-                //stateMachine.transform.Rotate(rotateAxis,stateMachine.RotateAngle,Space.World);
+                Vector3 dir = new Vector3(stateMachine.SwipeDir.x, 0, stateMachine.SwipeDir.y);
+                Vector3 rotateAxis = Vector3.Cross( Vector3.up,dir);
+                stateMachine.transform.Rotate(rotateAxis,stateMachine.RotateAngle,Space.World);
             }
         }
 
@@ -39,7 +67,7 @@ namespace Player
         {
             // Stop Ball On Exit Or On Collision
             Debug.Log("Stop Ball");
-            passedTime = 0;
+            stateMachine.Path = null;
         }
 
         public override void OnCollisionEnter(PlayerStateMachine stateMachine, Collision collision)

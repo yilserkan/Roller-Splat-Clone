@@ -16,6 +16,8 @@ namespace GridSystem
         
         private Grid m_Grid;
 
+        public static event Action<List<Vector3>> OnFoundPlayerPath;
+        
         private void OnEnable()
         {
             PlayerStateMachine.OnPlayerEnterMoveState += HandleOnPlayerEnterMoveState;
@@ -28,7 +30,8 @@ namespace GridSystem
 
         private void HandleOnPlayerEnterMoveState(Vector3 worldPos, Vector2Int dir)
         {
-            m_Grid.FindPlayerPath(m_Grid.GetCoordinatesFromWorldPos(worldPos) , dir);
+            List<Vector3> path = m_Grid.FindPlayerPath(m_Grid.GetCoordinatesFromWorldPos(worldPos) , dir);
+            OnFoundPlayerPath?.Invoke(path);
         }
 
         private void Start()
@@ -37,7 +40,6 @@ namespace GridSystem
             CreateGrid();
             Debug.Log(m_Grid.GetWorldPosFromCoordinates(new Vector2Int(1, 1)));
             m_Grid.FindNeighbors();
-            
         }
         
         private void CreateGrid()

@@ -123,18 +123,18 @@ namespace GridSystem
             }
         }
 
-        public List<Vector2Int> FindPlayerPath(Vector2Int startCoordinate, Vector2Int moveDir)
+        public List<Vector3> FindPlayerPath(Vector2Int startCoordinate, Vector2Int moveDir)
         {
-            List<Vector2Int> path = new List<Vector2Int>();
+            List<Vector3> path = new List<Vector3>();
             var dir = m_Directions.FirstOrDefault(x => x.Value == moveDir).Key;
-
+            
             Vector2Int currentCoordinate = startCoordinate;
             
             while (m_Grid[currentCoordinate].Neigbors[dir] != null && !m_Grid[currentCoordinate].IsBlocked)
             {
                 Debug.Log($"Way : {currentCoordinate}");
                 currentCoordinate = m_Grid[currentCoordinate].Neigbors[dir].Coordinates;
-                path.Add(currentCoordinate);
+                path.Add(GetWorldPosFromCoordinates(currentCoordinate));
                 Debug.Log($"--------------");
               
             }
