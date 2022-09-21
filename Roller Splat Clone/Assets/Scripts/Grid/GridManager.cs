@@ -30,8 +30,8 @@ namespace GridSystem
 
         private void HandleOnPlayerEnterMoveState(Vector3 worldPos, Vector2Int dir)
         {
-            List<Vector3> path = m_Grid.FindPlayerPath(m_Grid.GetCoordinatesFromWorldPos(worldPos) , dir);
-            OnFoundPlayerPath?.Invoke(path);
+            //List<Vector3> path = m_Grid.FindPlayerPath(m_Grid.GetCoordinatesFromWorldPos(worldPos) , dir);
+            //OnFoundPlayerPath?.Invoke(path);
         }
 
         private void Start()

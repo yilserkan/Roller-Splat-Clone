@@ -10,17 +10,13 @@ namespace GridSystem
     
     public class Grid : MonoBehaviour
     {
-        [SerializeField] private int m_Height;
-        [SerializeField] private int m_Width;
-        [SerializeField] private int m_Cellsize;
-        [SerializeField] private Vector3 m_GridStartPosition;
+        [SerializeField] private int height;
+        [SerializeField] private int width;
+        [SerializeField] private int cellsize;
+        [SerializeField] private Vector3 gridStartPosition;
         [SerializeField] private GameObject prefab;
-        
-        //private int m_Height;
-        //private int m_Width;
-        //private int m_Cellsize;
-        //private Vector3 m_GridStartPosition;
-        public static event Action<List<Vector3>> OnFoundPlayerPath;
+
+        public static event Action<List<Tile>> OnFoundPlayerPath;
         
         private Dictionary<Vector2Int, Tile> m_Grid = new Dictionary<Vector2Int, Tile>();
 
@@ -31,24 +27,7 @@ namespace GridSystem
             { Neighbors.Right, new Vector2Int(1, 0) },
             { Neighbors.Left, new Vector2Int(-1, 0) }
         };
-        /*
-        public Grid(int height, int width, int cellsize, Vector3 gridStartPos)
-        {
-            m_Height = height;
-            m_Width = width;
-            m_Cellsize = cellsize;
-            m_GridStartPosition = gridStartPos;
-            
-            for (int x = 0; x < m_Width; x++)
-            {
-                for (int y = 0; y < m_Height; y++)
-                {
-                    Vector2Int coordinates = new Vector2Int(x, y);
-                    m_Grid.Add(coordinates, new Tile(new Vector2Int(x,y)));
-                }
-            }
-        }
-*/
+
         private void OnEnable()
         {
             PlayerStateMachine.OnPlayerEnterMoveState += HandleOnPlayerEnterMoveState;
@@ -67,13 +46,14 @@ namespace GridSystem
 
         private void CreateGrid()
         {
-            for (int x = 0; x < m_Width; x++)
+            for (int x = 0; x < width; x++)
             {
-                for (int y = 0; y < m_Height; y++)
+                for (int y = 0; y < height; y++)
                 {
                     Vector2Int coordinates = new Vector2Int(x, y);
-                    Tile tile = Instantiate(prefab, GetWorldPosFromCoordinates(coordinates), Quaternion.identity).GetComponent<Tile>();
-                    tile.Init(coordinates);
+                    Vector3 worldPos = GetWorldPosFromCoordinates(coordinates);
+                    Tile tile = Instantiate(prefab,worldPos , Quaternion.identity).GetComponent<Tile>();
+                    tile.Init(coordinates,worldPos);
                     m_Grid.Add(coordinates,tile);
                 }
             }
@@ -82,21 +62,21 @@ namespace GridSystem
         
         public Vector3 GetWorldPosition(int x, int y)
         {
-            return new Vector3(x,y) * m_Cellsize;
+            return new Vector3(x,y) * cellsize;
         }
 
         public Vector3 GetWorldPosFromCoordinates(Vector2Int coordinates)
         {
-            float posX = m_GridStartPosition.x + coordinates.x * m_Cellsize;
-            float posY = m_GridStartPosition.z + coordinates.y * m_Cellsize;
+            float posX = gridStartPosition.x + coordinates.x * cellsize;
+            float posY = gridStartPosition.z + coordinates.y * cellsize;
             
             return new Vector3(posX, 0, posY);
         }
 
         public Vector2Int GetCoordinatesFromWorldPos(Vector3 worldPosition)
         {
-            int coordinateX = Mathf.RoundToInt((worldPosition.x - m_GridStartPosition.x )/ m_Cellsize);
-            int coordinateY = Mathf.RoundToInt((worldPosition.z -m_GridStartPosition.z)/ m_Cellsize);
+            int coordinateX = Mathf.RoundToInt((worldPosition.x - gridStartPosition.x )/ cellsize);
+            int coordinateY = Mathf.RoundToInt((worldPosition.z -gridStartPosition.z)/ cellsize);
 
             Vector2Int coordinate = new Vector2Int(coordinateX, coordinateY);
             
@@ -120,9 +100,9 @@ namespace GridSystem
         
         public void FindNeighbors()
         {
-            for (int x = 0; x < m_Width; x++)
+            for (int x = 0; x < width; x++)
             {
-                for (int y = 0; y < m_Height; y++)
+                for (int y = 0; y < height; y++)
                 {
                     Vector2Int coordinates = new Vector2Int(x, y);
                 
@@ -163,18 +143,19 @@ namespace GridSystem
             }
         }
 
-        public List<Vector3> FindPlayerPath(Vector2Int startCoordinate, Vector2Int moveDir)
+        public List<Tile> FindPlayerPath(Vector2Int startCoordinate, Vector2Int moveDir)
         {
-            List<Vector3> path = new List<Vector3>();
+            List<Tile> path = new List<Tile>();
             var dir = m_Directions.FirstOrDefault(x => x.Value == moveDir).Key;
             
             Vector2Int currentCoordinate = startCoordinate;
+            path.Add(m_Grid[currentCoordinate]);
             
-            while (m_Grid[currentCoordinate].Neigbors[dir] != null && !m_Grid[currentCoordinate].IsBlocked)
+            while (m_Grid[currentCoordinate].Neigbors[dir] != null && !m_Grid[currentCoordinate].Neigbors[dir].IsBlocked)
             {
                 Debug.Log($"Way : {currentCoordinate}");
                 currentCoordinate = m_Grid[currentCoordinate].Neigbors[dir].Coordinates;
-                path.Add(GetWorldPosFromCoordinates(currentCoordinate));
+                path.Add(m_Grid[currentCoordinate]);
             }
             Debug.Log($"Way : {currentCoordinate}");
             Debug.Log($"--------------");
@@ -183,12 +164,8 @@ namespace GridSystem
 
         private void HandleOnPlayerEnterMoveState(Vector3 worldPos, Vector2Int dir)
         {
-            List<Vector3> path = FindPlayerPath(GetCoordinatesFromWorldPos(worldPos) , dir);
+            List<Tile> path = FindPlayerPath(GetCoordinatesFromWorldPos(worldPos) , dir);
             OnFoundPlayerPath?.Invoke(path);
-        }
-        public void ColorTile(Color color)
-        {
-            
         }
     }
 }

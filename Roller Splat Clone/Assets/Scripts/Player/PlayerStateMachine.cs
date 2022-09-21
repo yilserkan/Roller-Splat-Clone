@@ -30,14 +30,14 @@ namespace Player
         private PlayerMoveState m_PlayerStopState;
         
         private Vector2Int m_swipeDir;
-        private List<Vector3> m_Path;
+        private List<Tile> m_Path;
         public Vector2Int SwipeDir
         {
             get { return  m_swipeDir; }
             private set { m_swipeDir = value; }
         }
 
-        public List<Vector3> Path
+        public List<Tile> Path
         {
             get
             {
@@ -158,7 +158,7 @@ namespace Player
             SwitchState(PlayerStates.Move);
         }
 
-        private void HandleOnFoundPlayerPath(List<Vector3> path)
+        private void HandleOnFoundPlayerPath(List<Tile> path)
         {
             Path = path;
         }

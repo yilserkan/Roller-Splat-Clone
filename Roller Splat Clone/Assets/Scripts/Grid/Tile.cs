@@ -14,34 +14,33 @@ namespace GridSystem
     public class Tile : MonoBehaviour
 
     {
-    public Vector2Int Coordinates;
-    public bool IsBlocked;
-    public Dictionary<Neighbors, Tile> Neigbors;
+        public Vector2Int Coordinates;
+        public Vector3 worldPosition;
+        public bool IsBlocked;
+        public bool IsColored;
+        public Dictionary<Neighbors, Tile> Neigbors;
 
-    public Tile(Vector2Int coordinates)
-    {
-        Coordinates = coordinates;
-        IsBlocked = false;
-        Neigbors = new Dictionary<Neighbors, Tile>()
+        private MeshRenderer m_MeshRenderer;
+        
+        public void Init(Vector2Int coordinates, Vector3 worldPos)
         {
-            { Neighbors.Up, null },
-            { Neighbors.Down, null },
-            { Neighbors.Left, null },
-            { Neighbors.Right, null }
-        };
-    }
-    public void Init(Vector2Int coordinates)
-    {
-        Coordinates = coordinates;
-        IsBlocked = false;
-        Neigbors = new Dictionary<Neighbors, Tile>()
+            Coordinates = coordinates;
+            worldPosition = worldPos;
+            m_MeshRenderer = GetComponent<MeshRenderer>();
+            IsBlocked = false;
+            IsColored = false;
+            Neigbors = new Dictionary<Neighbors, Tile>()
+            {
+                { Neighbors.Up, null },
+                { Neighbors.Down, null },
+                { Neighbors.Left, null },
+                { Neighbors.Right, null }
+            };
+        }
+
+        public void ColorTile(Color color)
         {
-            { Neighbors.Up, null },
-            { Neighbors.Down, null },
-            { Neighbors.Left, null },
-            { Neighbors.Right, null }
-        };
-    }
-    
+            m_MeshRenderer.material.color = color;
+        }
     }
 }

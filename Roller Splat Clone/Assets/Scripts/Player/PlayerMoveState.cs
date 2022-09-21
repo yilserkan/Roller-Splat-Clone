@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using GridSystem;
 using UnityEditor.Timeline.Actions;
 using UnityEngine;
 
@@ -33,15 +34,19 @@ namespace Player
             void MovePlayer()
             {
                 //stateMachine.transform.Translate( stateMachine.MoveSpeed* stateMachine.DeltaTime*stateMachine.SwipeDir, Space.World);
-                Vector3 targetPos = stateMachine.Path[m_CurrentPathIndex];
+                Tile targetTile = stateMachine.Path[m_CurrentPathIndex];
+                Vector3 targetPos = targetTile.worldPosition;
                 targetPos.y = stateMachine.transform.position.y;
                 stateMachine.transform.position = Vector3.MoveTowards(stateMachine.transform.position, targetPos,
                     stateMachine.DeltaTime * stateMachine.MoveSpeed);
                 
                 if (Vector3.Distance(stateMachine.transform.position, targetPos) < 0.1)
                 {
+                    targetTile.ColorTile(Color.green);
+                    
                     if (stateMachine.Path.Count > m_CurrentPathIndex+1)
                     {
+                        targetTile.ColorTile(Color.green);
                         m_CurrentPathIndex++;
                         Debug.Log(m_CurrentPathIndex);
                     }
@@ -49,6 +54,7 @@ namespace Player
                     {
                         stateMachine.SwitchState(PlayerStates.Idle);
                     }  
+                    
                     //Debug.Log($"Moving to {m_CurrentPathIndex}");
                 }
             }
