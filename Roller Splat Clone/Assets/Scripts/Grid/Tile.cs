@@ -10,24 +10,38 @@ namespace GridSystem
         Left,
         Right
     }
-    
-    public class Tile
-    {
-        public Vector2Int Coordinates;
-        public bool IsBlocked;
-        public Dictionary<Neighbors,Tile> Neigbors;
 
-        public Tile(Vector2Int coordinates)
+    public class Tile : MonoBehaviour
+
+    {
+    public Vector2Int Coordinates;
+    public bool IsBlocked;
+    public Dictionary<Neighbors, Tile> Neigbors;
+
+    public Tile(Vector2Int coordinates)
+    {
+        Coordinates = coordinates;
+        IsBlocked = false;
+        Neigbors = new Dictionary<Neighbors, Tile>()
         {
-            Coordinates = coordinates;
-            IsBlocked = false;
-            Neigbors = new Dictionary<Neighbors, Tile>()
-            {
-                { Neighbors.Up, null },
-                { Neighbors.Down, null },
-                { Neighbors.Left, null },
-                { Neighbors.Right, null }
-            };
-        }
+            { Neighbors.Up, null },
+            { Neighbors.Down, null },
+            { Neighbors.Left, null },
+            { Neighbors.Right, null }
+        };
+    }
+    public void Init(Vector2Int coordinates)
+    {
+        Coordinates = coordinates;
+        IsBlocked = false;
+        Neigbors = new Dictionary<Neighbors, Tile>()
+        {
+            { Neighbors.Up, null },
+            { Neighbors.Down, null },
+            { Neighbors.Left, null },
+            { Neighbors.Right, null }
+        };
+    }
+    
     }
 }

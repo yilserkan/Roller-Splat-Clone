@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using GridSystem;
 using UnityEngine;
+using Grid = GridSystem.Grid;
 
 namespace Player
 {
@@ -92,13 +93,13 @@ namespace Player
         private void OnEnable()
         {
             PlayerInputSystem.OnPlayerSwipe += HandleOnPlayerSwipe;
-            GridManager.OnFoundPlayerPath += HandleOnFoundPlayerPath;
+            Grid.OnFoundPlayerPath += HandleOnFoundPlayerPath;
         }
         
         private void OnDisable()
         {
             PlayerInputSystem.OnPlayerSwipe -= HandleOnPlayerSwipe;
-            GridManager.OnFoundPlayerPath -= HandleOnFoundPlayerPath;
+            Grid.OnFoundPlayerPath -= HandleOnFoundPlayerPath;
         }
         
         void Start()

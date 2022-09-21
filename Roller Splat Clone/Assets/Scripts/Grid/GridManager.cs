@@ -36,7 +36,7 @@ namespace GridSystem
 
         private void Start()
         {
-            m_Grid = new Grid(heigth, width, cellSize, gridStartPos);
+            //m_Grid = new Grid(heigth, width, cellSize, gridStartPos);
             CreateGrid();
             Debug.Log(m_Grid.GetWorldPosFromCoordinates(new Vector2Int(1, 1)));
             m_Grid.FindNeighbors();

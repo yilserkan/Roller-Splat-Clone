@@ -44,11 +44,9 @@ namespace Player
                     {
                         m_CurrentPathIndex++;
                         Debug.Log(m_CurrentPathIndex);
-                        Debug.Log("Count" + stateMachine.Path.Count);
                     }
                     else
                     {
-                        Debug.Log("Switch State");
                         stateMachine.SwitchState(PlayerStates.Idle);
                     }  
                     //Debug.Log($"Moving to {m_CurrentPathIndex}");

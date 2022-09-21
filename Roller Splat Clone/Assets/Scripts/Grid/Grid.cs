@@ -1,18 +1,27 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Player;
 using UnityEngine;
 
 namespace GridSystem
 {
     
-    public class Grid
+    public class Grid : MonoBehaviour
     {
-        private int m_Height;
-        private int m_Width;
-        private int m_Cellsize;
-        private Vector3 m_GridStartPosition;
-
+        [SerializeField] private int m_Height;
+        [SerializeField] private int m_Width;
+        [SerializeField] private int m_Cellsize;
+        [SerializeField] private Vector3 m_GridStartPosition;
+        [SerializeField] private GameObject prefab;
+        
+        //private int m_Height;
+        //private int m_Width;
+        //private int m_Cellsize;
+        //private Vector3 m_GridStartPosition;
+        public static event Action<List<Vector3>> OnFoundPlayerPath;
+        
         private Dictionary<Vector2Int, Tile> m_Grid = new Dictionary<Vector2Int, Tile>();
 
         private Dictionary<Neighbors, Vector2Int> m_Directions = new Dictionary<Neighbors, Vector2Int>()
@@ -22,7 +31,7 @@ namespace GridSystem
             { Neighbors.Right, new Vector2Int(1, 0) },
             { Neighbors.Left, new Vector2Int(-1, 0) }
         };
-
+        /*
         public Grid(int height, int width, int cellsize, Vector3 gridStartPos)
         {
             m_Height = height;
@@ -39,7 +48,38 @@ namespace GridSystem
                 }
             }
         }
+*/
+        private void OnEnable()
+        {
+            PlayerStateMachine.OnPlayerEnterMoveState += HandleOnPlayerEnterMoveState;
+        }
 
+        private void OnDisable()
+        {
+            PlayerStateMachine.OnPlayerEnterMoveState -= HandleOnPlayerEnterMoveState;
+        }
+        
+        private void Start()
+        {
+            CreateGrid();
+            
+        }
+
+        private void CreateGrid()
+        {
+            for (int x = 0; x < m_Width; x++)
+            {
+                for (int y = 0; y < m_Height; y++)
+                {
+                    Vector2Int coordinates = new Vector2Int(x, y);
+                    Tile tile = Instantiate(prefab, GetWorldPosFromCoordinates(coordinates), Quaternion.identity).GetComponent<Tile>();
+                    tile.Init(coordinates);
+                    m_Grid.Add(coordinates,tile);
+                }
+            }
+            FindNeighbors();
+        }
+        
         public Vector3 GetWorldPosition(int x, int y)
         {
             return new Vector3(x,y) * m_Cellsize;
@@ -90,7 +130,7 @@ namespace GridSystem
                 }
             }
 
-            //PrintNeighbors();
+            PrintNeighbors();
         }
 
         private void AddNeighbors(Vector2Int coordinates)
@@ -135,12 +175,20 @@ namespace GridSystem
                 Debug.Log($"Way : {currentCoordinate}");
                 currentCoordinate = m_Grid[currentCoordinate].Neigbors[dir].Coordinates;
                 path.Add(GetWorldPosFromCoordinates(currentCoordinate));
-                Debug.Log($"--------------");
-              
             }
             Debug.Log($"Way : {currentCoordinate}");
+            Debug.Log($"--------------");
             return path;
         }
-    }
 
+        private void HandleOnPlayerEnterMoveState(Vector3 worldPos, Vector2Int dir)
+        {
+            List<Vector3> path = FindPlayerPath(GetCoordinatesFromWorldPos(worldPos) , dir);
+            OnFoundPlayerPath?.Invoke(path);
+        }
+        public void ColorTile(Color color)
+        {
+            
+        }
+    }
 }
