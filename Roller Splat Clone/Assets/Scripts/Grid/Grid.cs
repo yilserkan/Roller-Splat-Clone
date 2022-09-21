@@ -90,7 +90,7 @@ namespace GridSystem
                 }
             }
 
-            PrintNeighbors();
+            //PrintNeighbors();
         }
 
         private void AddNeighbors(Vector2Int coordinates)
@@ -123,20 +123,24 @@ namespace GridSystem
             }
         }
 
-        public void FindLastPoint(Vector2Int startCoordinate, Vector2Int moveDir)
+        public List<Vector2Int> FindPlayerPath(Vector2Int startCoordinate, Vector2Int moveDir)
         {
+            List<Vector2Int> path = new List<Vector2Int>();
             var dir = m_Directions.FirstOrDefault(x => x.Value == moveDir).Key;
 
             Vector2Int currentCoordinate = startCoordinate;
             
-            while (m_Grid[currentCoordinate].Neigbors[dir] != null || !m_Grid[currentCoordinate].IsBlocked)
+            while (m_Grid[currentCoordinate].Neigbors[dir] != null && !m_Grid[currentCoordinate].IsBlocked)
             {
                 Debug.Log($"Way : {currentCoordinate}");
                 currentCoordinate = m_Grid[currentCoordinate].Neigbors[dir].Coordinates;
+                path.Add(currentCoordinate);
+                Debug.Log($"--------------");
+              
             }
             Debug.Log($"Way : {currentCoordinate}");
+            return path;
         }
-        //Listeye ceir
     }
 
 }

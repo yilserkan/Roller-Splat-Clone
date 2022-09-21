@@ -28,6 +28,7 @@ namespace Player
         {
             if (IsTouching)
             {
+                Debug.Log("IsTouching");
                 Touch touch = Input.GetTouch(0);
                 Vector2 touchPosition = touch.position;
 

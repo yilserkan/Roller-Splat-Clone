@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace GridSystem
 {
-    public class TestGrid : MonoBehaviour
+    public class GridManager : MonoBehaviour
     {
         [SerializeField] private int heigth;
         [SerializeField] private int width;
@@ -23,12 +23,12 @@ namespace GridSystem
 
         private void OnDisable()
         {
-            PlayerStateMachine.OnPlayerEnterMoveState += HandleOnPlayerEnterMoveState;
+            PlayerStateMachine.OnPlayerEnterMoveState -= HandleOnPlayerEnterMoveState;
         }
 
         private void HandleOnPlayerEnterMoveState(Vector3 worldPos, Vector2Int dir)
         {
-            m_Grid.FindLastPoint(m_Grid.GetCoordinatesFromWorldPos(worldPos) , dir);
+            m_Grid.FindPlayerPath(m_Grid.GetCoordinatesFromWorldPos(worldPos) , dir);
         }
 
         private void Start()
