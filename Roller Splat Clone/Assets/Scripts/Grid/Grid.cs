@@ -19,6 +19,7 @@ namespace GridSystem
 
         public static event Action<List<Tile>> OnFoundPlayerPath;
         
+        public static event Action<Vector3> OnStartPointFound;
         private Dictionary<Vector2Int, Tile> m_Grid = new Dictionary<Vector2Int, Tile>();
 
         private LevelGenerator m_LevelGenerator;
@@ -46,7 +47,8 @@ namespace GridSystem
            
             CreateGrid();
             m_LevelGenerator = new LevelGenerator(width, height, m_Grid);
-            m_LevelGenerator.GenerateRandomLevel();
+            Vector2Int startPos = m_LevelGenerator.GenerateRandomLevel();
+            OnStartPointFound.Invoke(GetWorldPosFromCoordinates(startPos));
         }
 
         private void CreateGrid()
@@ -174,6 +176,7 @@ namespace GridSystem
         {
             foreach (var tile in m_Grid)
             {
+                tile.Value.IsControlBlock = false;
                 tile.Value.IsBlocked = true;
                 tile.Value.IsColored = false;
             }

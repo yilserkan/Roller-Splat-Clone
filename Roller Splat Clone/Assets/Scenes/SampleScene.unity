@@ -792,8 +792,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 19437018ec5bb884ab8b7134231064a8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  height: 10
-  width: 5
+  height: 16
+  width: 16
   cellsize: 1
   gridStartPosition: {x: 0, y: 0, z: 0}
   prefab: {fileID: 2299933919288668269, guid: a1ba527525ed4a9498cb3c80cdac42a3, type: 3}

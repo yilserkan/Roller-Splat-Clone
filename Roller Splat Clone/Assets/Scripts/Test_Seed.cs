@@ -11,7 +11,6 @@ public class Test_Seed : MonoBehaviour
 
     private void Start()
     {
-        InitSeedValue(seed);
         LogRandomValues();
     }
 

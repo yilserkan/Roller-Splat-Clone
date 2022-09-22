@@ -93,17 +93,26 @@ namespace Player
         {
             PlayerInputSystem.OnPlayerSwipe += HandleOnPlayerSwipe;
             Grid.OnFoundPlayerPath += HandleOnFoundPlayerPath;
+            Grid.OnStartPointFound += HandleOnPlayerPosFound;
         }
         
         private void OnDisable()
         {
             PlayerInputSystem.OnPlayerSwipe -= HandleOnPlayerSwipe;
             Grid.OnFoundPlayerPath -= HandleOnFoundPlayerPath;
+            Grid.OnStartPointFound -= HandleOnPlayerPosFound;
         }
-        
+
+        private void HandleOnPlayerPosFound(Vector3 obj)
+        {
+            Vector3 startPos = obj;
+            obj.y = 1;
+            transform.position = startPos;
+        }
+
         void Start()
         {
-            transform.position = new Vector3(0,1,0);
+            //transform.position = new Vector3(0,1,0);
             SwitchState(initialState);
         }
 

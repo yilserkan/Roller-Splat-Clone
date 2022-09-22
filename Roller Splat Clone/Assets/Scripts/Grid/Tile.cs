@@ -4,6 +4,7 @@ using UnityEngine;
 
 namespace GridSystem
 {
+    
     public enum Neighbors
     {
         Up,
@@ -18,6 +19,7 @@ namespace GridSystem
         public Vector2Int Coordinates;
         public Vector3 WorldPosition;
         public bool IsBlocked;
+        public bool IsControlBlock;
         public bool IsColored;
         public Dictionary<Neighbors, Tile> Neigbors;
 
