@@ -124,8 +124,17 @@ namespace GridSystem
 
             int randomNumber = Random.Range(0, possibleEndPoints.Count);
             Tile randomTile = possibleEndPoints[randomNumber];
-            
-            curTile.IsBlocked = false;
+
+            List<Tile> path = new List<Tile>();
+            bool pathContainsBlockedTile = false;
+            path.Add(curTile);
+            if (curTile.IsBlocked)
+            {
+                pathContainsBlockedTile = true;
+            }
+            //curTile.IsBlocked = false;
+
+          
             
             while (curTile != randomTile)
             {
@@ -134,8 +143,24 @@ namespace GridSystem
                     break;
                 }
                 
+                
                 curTile = m_Grid[curTile.Coordinates].Neigbors[dir];
-                curTile.IsBlocked = false;
+                path.Add(curTile);
+                if (curTile.IsBlocked)
+                {
+                    pathContainsBlockedTile = true;
+                }
+                //curTile.IsBlocked = false;
+            }
+
+            if (!pathContainsBlockedTile)
+            {
+                return NOT_FOUND;
+            }
+
+            foreach (var tile in path)
+            {
+                tile.IsBlocked = false;
             }
             
             ActivateControlBlock(tileCoordinates,curTile.Coordinates,dir);
