@@ -106,7 +106,7 @@ namespace Player
         private void HandleOnPlayerPosFound(Vector3 obj)
         {
             Vector3 startPos = obj;
-            obj.y = 1;
+            startPos.y = 1;
             transform.position = startPos;
         }
 

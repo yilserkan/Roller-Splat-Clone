@@ -48,13 +48,13 @@ namespace GridSystem
 
         private void Update()
         {
-            if (IsBlocked)
+            if (IsControlBlock)
+            {
+                m_MeshRenderer.material.color = Color.black;
+            }
+            else if (IsBlocked)
             {
                 m_MeshRenderer.material.color = Color.red;
-            }
-            else
-            {
-                m_MeshRenderer.material.color = Color.green;
             }
         }
     }
