@@ -21,6 +21,7 @@ namespace GridSystem
         public bool IsBlocked;
         public bool IsControlBlock;
         public bool IsColored;
+        public int IsControlSetIndex;
         public Dictionary<Neighbors, Tile> Neigbors;
 
         private MeshRenderer m_MeshRenderer;
@@ -32,6 +33,7 @@ namespace GridSystem
             m_MeshRenderer = GetComponent<MeshRenderer>();
             IsBlocked = false;
             IsColored = false;
+            IsControlSetIndex = -1;
             Neigbors = new Dictionary<Neighbors, Tile>()
             {
                 { Neighbors.Up, null },
@@ -39,6 +41,14 @@ namespace GridSystem
                 { Neighbors.Left, null },
                 { Neighbors.Right, null }
             };
+        }
+
+        public void SetControlIndex(int index)
+        {
+            if (IsControlSetIndex == -1)
+            {
+                IsControlSetIndex = index;
+            }
         }
 
         public void ColorTile(Color color)
@@ -50,9 +60,9 @@ namespace GridSystem
         {
             if (IsControlBlock)
             {
-                m_MeshRenderer.material.color = Color.black;
+                //m_MeshRenderer.material.color = Color.black;
             }
-            else if (IsBlocked)
+            if (IsBlocked)
             {
                 m_MeshRenderer.material.color = Color.red;
             }

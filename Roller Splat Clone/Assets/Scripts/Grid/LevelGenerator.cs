@@ -23,7 +23,7 @@ namespace GridSystem
         private bool isInitialized = false;
         private bool prevInitialized = false;
         private bool startTile = true;
-        
+        private int cycleIndex = -1;
         private Dictionary<Vector2Int, Tile> m_Grid;
 
         public LevelGenerator(int width, int height,Dictionary<Vector2Int, Tile> grid)
@@ -55,6 +55,8 @@ namespace GridSystem
 
             for (int i = 0; i < cycle; i++)
             {
+                Debug.Log("------Cycle Index ; " + i );
+                cycleIndex = i;
                 Debug.Log("------Start Coords ; " + startCoordinates );
                 m_Neighbors = GetRandomDirection(startCoordinates);
                 Debug.Log("Trying Dir "+ m_Neighbors);
@@ -73,15 +75,17 @@ namespace GridSystem
                         if (prevInitialized)
                         {
                             m_Neighbors = m_PrevNeighbor;
+                            DisableControlBlock(startCoordinates,m_Neighbors);
                             newCoords = UnblockTile(startCoordinates,m_Neighbors);
                         }
                         else
                         {
                             m_Neighbors = GetRandomDirFromOtherAxis(m_Neighbors);
+                            DisableControlBlock(startCoordinates,m_Neighbors);
                             newCoords = UnblockTile(startCoordinates,m_Neighbors);
                         }
                         
-                        Debug.Log("Trying Dir "+ m_Neighbors);
+                        Debug.Log("*********************************Trying Dir  "+ m_Neighbors);
                     }
                 }
 
@@ -169,12 +173,26 @@ namespace GridSystem
         {
             if (m_Grid[endCoords].Neigbors[dir].IsBlocked)
             {
+                m_Grid[endCoords].Neigbors[dir].SetControlIndex(cycleIndex);
                 m_Grid[endCoords].Neigbors[dir].IsControlBlock = true;
             }
 
             
             Neighbors nb = FindOppositeDir(dir);
             m_Grid[startCoords].Neigbors[nb].IsControlBlock = true;
+            m_Grid[startCoords].Neigbors[nb].SetControlIndex(cycleIndex);
+            
+        }
+
+        private void DisableControlBlock(Vector2Int startCoords, Neighbors dir)
+        {
+            Debug.Log("*********************************Coords "+ m_Neighbors + "Dir " + dir + " cycle Index " + cycleIndex);
+
+            if (m_Grid[startCoords].Neigbors[dir].IsControlSetIndex == cycleIndex-1)
+            {
+                Debug.Log("*********************************Disable Control Block "+ m_Neighbors);
+                m_Grid[startCoords].Neigbors[dir].IsControlBlock = false;
+            }
             
         }
         
