@@ -47,7 +47,7 @@ namespace GridSystem
             
             Vector2Int startCoordinates = new Vector2Int(randomX, randomY);
             Vector2Int startPos = startCoordinates;
-            
+
             //Debug.Log(startCoordinates);
             m_Grid[startCoordinates].IsBlocked = false;
             
@@ -88,7 +88,7 @@ namespace GridSystem
                         Debug.Log("*********************************Trying Dir  "+ m_Neighbors);
                     }
                 }
-
+                
                 prevInitialized = true;
                 m_PrevNeighbor = m_Neighbors;
                 if (newCoords == NOT_FOUND)
@@ -100,7 +100,7 @@ namespace GridSystem
                 Debug.Log("Unblocking Tile " + startCoordinates );
                 Debug.Log("---------------" + i);
             }
-
+            
             return startPos;
         }      
         public Vector2Int UnblockTile(Vector2Int tileCoordinates,Neighbors dir)
@@ -132,10 +132,7 @@ namespace GridSystem
             {
                 pathContainsBlockedTile = true;
             }
-            //curTile.IsBlocked = false;
-
-          
-            
+  
             while (curTile != randomTile)
             {
                 if (IsNeigborControlBlock(curTile.Coordinates, dir))
@@ -150,7 +147,6 @@ namespace GridSystem
                 {
                     pathContainsBlockedTile = true;
                 }
-                //curTile.IsBlocked = false;
             }
 
             if (!pathContainsBlockedTile)
