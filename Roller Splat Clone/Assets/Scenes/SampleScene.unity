@@ -797,6 +797,7 @@ MonoBehaviour:
   cellsize: 1
   gridStartPosition: {x: 0, y: 0, z: 0}
   prefab: {fileID: 2299933919288668269, guid: a1ba527525ed4a9498cb3c80cdac42a3, type: 3}
+  useBothAxisOnStartingPoint: 1
 --- !u!1 &832575517
 GameObject:
   m_ObjectHideFlags: 0

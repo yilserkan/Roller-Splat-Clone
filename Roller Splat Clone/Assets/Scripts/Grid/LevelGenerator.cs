@@ -23,15 +23,18 @@ namespace GridSystem
         private bool isInitialized = false;
         private bool prevInitialized = false;
         private bool startTile = true;
+        private bool useBothAxisOnStartingPoint;
         private int cycleIndex = -1;
         private Dictionary<Vector2Int, Tile> m_Grid;
 
-        public LevelGenerator(int width, int height,Dictionary<Vector2Int, Tile> grid)
+        public LevelGenerator(int width, int height,Dictionary<Vector2Int, Tile> grid, bool useBothAxis)
         {
             m_Height = height;
             m_Width = width;
 
             m_Grid = grid;
+
+            useBothAxisOnStartingPoint = useBothAxis;
 
             xTileStartIndex = 1;
             yTileStartIndex = 1;
@@ -48,6 +51,10 @@ namespace GridSystem
             Vector2Int startCoordinates = new Vector2Int(randomX, randomY);
             Vector2Int startPos = startCoordinates;
 
+            Neighbors startDir = Neighbors.Up;
+            bool startDirInitialized = false;
+            bool triedOppositeStartDir = false;
+            
             //Debug.Log(startCoordinates);
             m_Grid[startCoordinates].IsBlocked = false;
             
@@ -88,18 +95,50 @@ namespace GridSystem
                         Debug.Log("*********************************Trying Dir  "+ m_Neighbors);
                     }
                 }
+
+                if (!startDirInitialized)
+                {
+                    startDir = m_Neighbors;
+                    startDirInitialized = true;
+                }
                 
                 prevInitialized = true;
                 m_PrevNeighbor = m_Neighbors;
+                if (newCoords == NOT_FOUND && !triedOppositeStartDir && useBothAxisOnStartingPoint)
+                {
+                    triedOppositeStartDir = true;
+                    Neighbors newDir = GetRandomDirFromOtherAxis(startDir);
+                    Debug.Log( "******************************************* Trying New Start Dir ; " + newDir );
+                    newCoords = UnblockTile(startPos,newDir);
+
+                    if (newCoords == NOT_FOUND)
+                    {
+                        newDir = FindOppositeDir(newDir);
+                        newCoords = UnblockTile(startPos, newDir);
+                        Debug.Log( "******************************************* Trying New Start Dir ; " + newDir );
+                        if (newCoords == NOT_FOUND)
+                        {
+                            break;
+                        }
+                    }
+                    
+                    m_Neighbors = newDir;
+                    Debug.Log( "******************************************* Found New Start Dir ; " + newDir );
+                }
+                
                 if (newCoords == NOT_FOUND)
                 {
                     break;
                 }
+                
                 startCoordinates = newCoords;
                 Debug.Log( "--------- Found Dir ; " + m_Neighbors );
                 Debug.Log("Unblocking Tile " + startCoordinates );
                 Debug.Log("---------------" + i);
             }
+            
+            
+            
             
             return startPos;
         }      

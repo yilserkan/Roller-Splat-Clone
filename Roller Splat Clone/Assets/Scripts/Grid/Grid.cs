@@ -5,6 +5,7 @@ using System.Linq;
 using Player;
 using Unity.VisualScripting;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace GridSystem
 {
@@ -16,6 +17,7 @@ namespace GridSystem
         [SerializeField] private int cellsize;
         [SerializeField] private Vector3 gridStartPosition;
         [SerializeField] private GameObject prefab;
+        [SerializeField] private bool useBothAxisOnStartingPoint;
 
         public static event Action<List<Tile>> OnFoundPlayerPath;
         
@@ -44,9 +46,8 @@ namespace GridSystem
         
         private void Start()
         {
-           
             CreateGrid();
-            m_LevelGenerator = new LevelGenerator(width, height, m_Grid);
+            m_LevelGenerator = new LevelGenerator(width, height, m_Grid,useBothAxisOnStartingPoint);
             Vector2Int startPos = m_LevelGenerator.GenerateRandomLevel();
             OnStartPointFound.Invoke(GetWorldPosFromCoordinates(startPos));
         }
