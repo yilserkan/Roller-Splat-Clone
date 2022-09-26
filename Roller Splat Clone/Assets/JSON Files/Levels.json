@@ -1,0 +1,22 @@
+{
+    "Levels": [
+        {
+            "Height": 10,
+            "Width": 10,
+            "Cycles": 10,
+            "Seed": 78
+        },
+        {
+            "Height": 10,
+            "Width": 10,
+            "Cycles": 10,
+            "Seed": 604
+        },
+        {
+            "Height": 10,
+            "Width": 10,
+            "Cycles": 10,
+            "Seed": 397
+        }
+    ]
+}
