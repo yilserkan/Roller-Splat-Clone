@@ -909,7 +909,7 @@ MonoBehaviour:
   initialState: 1
   inputSystem: {fileID: 975984299}
   raycastMultiplicator: 0.5
-  moveSpeed: 5
+  moveSpeed: 10
   rotateAngle: 5
   maxDistance: 0.5
 --- !u!1 &1088720762

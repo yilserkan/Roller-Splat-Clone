@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using ObjectPool;
 using UnityEngine;
 
 namespace GridSystem
@@ -13,7 +14,7 @@ namespace GridSystem
         Right
     }
 
-    public class Tile : MonoBehaviour
+    public class Tile : AbstractObjectPoolObject<Tile>
 
     {
         public Vector2Int Coordinates;
