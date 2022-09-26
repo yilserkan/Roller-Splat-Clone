@@ -17,8 +17,8 @@ namespace GridSystem
         private int m_YTileStartIndex;
         private int m_YTileEndIndex;
 
-        private Neighbors m_Neighbors;
-        private Neighbors m_PrevNeighbor;
+        private Direction m_CurrentDirection;
+        private Direction m_PrevDirection;
         private bool m_IsInitialized = false;
         private bool m_PrevInitialized = false;
         private bool m_StartTile = true;
@@ -26,6 +26,8 @@ namespace GridSystem
         private int m_CycleIndex = -1;
         private Dictionary<Vector2Int, Tile> m_Grid;
 
+        private Directions m_Directions = new Directions();
+            
         public int m_PathCount = 0;
         
         private static Vector2Int NOT_FOUND = new Vector2Int(-1, -1);
@@ -54,62 +56,58 @@ namespace GridSystem
             Vector2Int startCoordinates = new Vector2Int(randomX, randomY);
             Vector2Int startPos = startCoordinates;
 
-            Neighbors startDir = Neighbors.Up;
+            Direction startDir = Direction.Up;
             bool startDirInitialized = false;
             bool triedOppositeStartDir = false;
             
-            //Debug.Log(startCoordinates);
-            //m_Grid[startCoordinates].IsBlocked = false;
-            
             SetTileAsPath(m_Grid[startCoordinates]);
             
-
             for (int i = 0; i < m_Cycles; i++)
             {
                 m_CycleIndex = i;
-                m_Neighbors = GetRandomDirection(startCoordinates);
+                m_CurrentDirection = m_Directions.GetRandomDirection(m_CurrentDirection,ref m_IsInitialized);
                 Vector2Int newCoords = NOT_FOUND;
                 
-                newCoords = UnblockTile(startCoordinates, m_Neighbors);
+                newCoords = UnblockTile(startCoordinates, m_CurrentDirection);
                 if (newCoords == NOT_FOUND)
                 {
-                    m_Neighbors = FindOppositeDir(m_Neighbors);
-                    newCoords = UnblockTile(startCoordinates,m_Neighbors);
+                    m_CurrentDirection = m_Directions.FindOppositeDirection(m_CurrentDirection);
+                    newCoords = UnblockTile(startCoordinates,m_CurrentDirection);
                     
                     if (newCoords == NOT_FOUND)
                     {
                         if (m_PrevInitialized)
                         {
-                            m_Neighbors = m_PrevNeighbor;
-                            DisableControlBlock(startCoordinates,m_Neighbors);
-                            newCoords = UnblockTile(startCoordinates,m_Neighbors);
+                            m_CurrentDirection = m_PrevDirection;
+                            DisableControlBlock(startCoordinates,m_CurrentDirection);
+                            newCoords = UnblockTile(startCoordinates,m_CurrentDirection);
                         }
                         else
                         {
-                            m_Neighbors = GetRandomDirFromOtherAxis(m_Neighbors);
-                            DisableControlBlock(startCoordinates,m_Neighbors);
-                            newCoords = UnblockTile(startCoordinates,m_Neighbors);
+                            m_CurrentDirection = m_Directions.GetRandomDirFromOtherAxis(m_CurrentDirection);
+                            DisableControlBlock(startCoordinates,m_CurrentDirection);
+                            newCoords = UnblockTile(startCoordinates,m_CurrentDirection);
                         }
                     }
                 }
 
                 if (!startDirInitialized)
                 {
-                    startDir = m_Neighbors;
+                    startDir = m_CurrentDirection;
                     startDirInitialized = true;
                 }
                 
                 m_PrevInitialized = true;
-                m_PrevNeighbor = m_Neighbors;
+                m_PrevDirection = m_CurrentDirection;
                 if (newCoords == NOT_FOUND && !triedOppositeStartDir && m_UseBothAxisOnStartingPoint)
                 {
                     triedOppositeStartDir = true;
-                    Neighbors newDir = GetRandomDirFromOtherAxis(startDir);
+                    Direction newDir = m_Directions.GetRandomDirFromOtherAxis(startDir);
                     newCoords = UnblockTile(startPos,newDir);
 
                     if (newCoords == NOT_FOUND)
                     {
-                        newDir = FindOppositeDir(newDir);
+                        newDir = m_Directions.FindOppositeDirection(newDir);
                         newCoords = UnblockTile(startPos, newDir);
                         if (newCoords == NOT_FOUND)
                         {
@@ -117,7 +115,7 @@ namespace GridSystem
                         }
                     }
                     
-                    m_Neighbors = newDir;
+                    m_CurrentDirection = newDir;
                }
                 
                 if (newCoords == NOT_FOUND)
@@ -128,12 +126,9 @@ namespace GridSystem
                 startCoordinates = newCoords;
             }
             
-            
-            
-            
             return startPos;
         }      
-        public Vector2Int UnblockTile(Vector2Int tileCoordinates,Neighbors dir)
+        public Vector2Int UnblockTile(Vector2Int tileCoordinates,Direction dir)
         {
             List<Tile> possibleEndPoints = new List<Tile>();
             possibleEndPoints = FindPossibleEndPoints(tileCoordinates, dir);
@@ -143,7 +138,7 @@ namespace GridSystem
             return curTile;
         }
 
-        private Vector2Int UnblockPath(Vector2Int tileCoordinates, Neighbors dir, List<Tile> possibleEndPoints)
+        private Vector2Int UnblockPath(Vector2Int tileCoordinates, Direction dir, List<Tile> possibleEndPoints)
         {
             if (possibleEndPoints.Count <= 0)
             {
@@ -201,11 +196,11 @@ namespace GridSystem
         private void SetTileAsPath(Tile tile)
         {
             tile.IsBlocked = false;
-            tile.LowerTilePos();
+            tile.SetTileAsPath();
             m_PathCount++;
         }
         
-        private List<Tile> FindPossibleEndPoints(Vector2Int tileCoordinates, Neighbors dir)
+        private List<Tile> FindPossibleEndPoints(Vector2Int tileCoordinates, Direction dir)
         {
             Tile curTile = m_Grid[tileCoordinates];
             int maxLength = GetMaxLength(curTile.Coordinates,dir);
@@ -231,7 +226,7 @@ namespace GridSystem
         }
         
 
-        private void ActivateControlBlock(Vector2Int startCoords,Vector2Int endCoords, Neighbors dir)
+        private void ActivateControlBlock(Vector2Int startCoords,Vector2Int endCoords, Direction dir)
         {
             if (m_Grid[endCoords].Neigbors[dir].IsBlocked)
             {
@@ -240,127 +235,51 @@ namespace GridSystem
             }
 
             
-            Neighbors nb = FindOppositeDir(dir);
+            Direction nb = m_Directions.FindOppositeDirection(dir);
             m_Grid[startCoords].Neigbors[nb].IsControlBlock = true;
             m_Grid[startCoords].Neigbors[nb].SetControlIndex(m_CycleIndex);
             
         }
 
-        private void DisableControlBlock(Vector2Int startCoords, Neighbors dir)
+        private void DisableControlBlock(Vector2Int startCoords, Direction dir)
         {
-            if (m_Grid[startCoords].Neigbors[dir].IsControlSetIndex == m_CycleIndex-1)
+            if (m_Grid[startCoords].Neigbors[dir].IsControlIndex == m_CycleIndex-1)
             {
                 m_Grid[startCoords].Neigbors[dir].IsControlBlock = false;
             }
         }
         
-        private int GetMaxLength(Vector2Int coordinates, Neighbors dir)
+        private int GetMaxLength(Vector2Int coordinates, Direction dir)
         {
             int length = 0;
             switch (dir)
             {
-                case Neighbors.Up:
+                case Direction.Up:
                     length = (m_YTileEndIndex + 1) - coordinates.y;
                     break;
-                case Neighbors.Down:
+                case Direction.Down:
                     length = coordinates.y;
                     break;
-                case Neighbors.Right:
+                case Direction.Right:
                     length = (m_XTileEndIndex + 1) - coordinates.x;
                     break;
-                case Neighbors.Left:
+                case Direction.Left:
                     length = coordinates.x;
                     break;
             }
             return length;
         }
         
-        public Neighbors GetRandomDirection(Vector2Int coords)
-        {
-            if (!m_IsInitialized)
-            {
-                int directionCount = Enum.GetNames(typeof(Neighbors)).Length;
-                int randomDirection = Random.Range(0, directionCount);
-                Neighbors randomNeighbor = (Neighbors)randomDirection;
-                m_IsInitialized = true;
-                return randomNeighbor;
-            }
-            
-            if (m_Neighbors == Neighbors.Down || m_Neighbors == Neighbors.Up)
-            {
-                return GetRandomDirFromOtherAxis(Neighbors.Up);
-            }
-       
-            return GetRandomDirFromOtherAxis(Neighbors.Left);
-        }
-        
-        private Neighbors FindOppositeDir(Neighbors dir)
-        {
-            Neighbors nb = Neighbors.Down;
-            switch (dir)
-            {
-                case Neighbors.Up:
-                    nb = Neighbors.Down;
-                    break;
-                case Neighbors.Down:
-                    nb =Neighbors.Up;
-                    break;
-                case Neighbors.Left:
-                    nb = Neighbors.Right;
-                    break;
-                case Neighbors.Right:
-                    nb = Neighbors.Left;
-                    break;
-            }
+        public bool IsEdge(Vector2Int coord) => coord.x == m_XTileStartIndex || coord.x == m_XTileEndIndex ||
+                                                coord.y == m_YTileStartIndex || coord.y == m_YTileEndIndex;
 
-            return nb;
-        }
-        
-        private Neighbors GetRandomDirFromOtherAxis(Neighbors dir)
-        {
-            Neighbors nb;
-            if (dir == Neighbors.Up || dir == Neighbors.Down)
-            {     
-                int ran = Random.Range(2, 4);
-                nb = (Neighbors)ran;
-            }
-            else 
-            {
-                int ran = Random.Range(0, 2);
-                nb = (Neighbors)ran;
-            }
+        public bool IsBlocked(Vector2Int coordinates) => m_Grid[coordinates].IsBlocked;
 
-            return nb;
-        }
-        
-        public bool IsEdge(Vector2Int coord)
-        {
-            if (coord.x != m_XTileStartIndex && coord.x != m_XTileEndIndex && coord.y != m_YTileStartIndex && coord.y != m_YTileEndIndex)
-            {
-                return false;
-            }
+        public bool IsNeigborBlocked(Vector2Int coordinates, Direction dir) => m_Grid[coordinates].Neigbors[dir].IsBlocked;
 
-            return true;
-        }
-
-        public bool IsBlocked(Vector2Int coordinates)
-        {
-            return m_Grid[coordinates].IsBlocked;
-        }
-
-        public bool IsNeigborBlocked(Vector2Int coordinates, Neighbors dir)
-        {
-            return m_Grid[coordinates].Neigbors[dir].IsBlocked;
-        }
+        public bool IsControlBlock(Vector2Int coordinates) => m_Grid[coordinates].IsControlBlock;
         
-        public bool IsControlBlock(Vector2Int coordinates)
-        {
-            return m_Grid[coordinates].IsControlBlock;
-        }
+        public bool IsNeigborControlBlock(Vector2Int coordinates, Direction dir)=> m_Grid[coordinates].Neigbors[dir].IsControlBlock;
         
-        public bool IsNeigborControlBlock(Vector2Int coordinates, Neighbors dir)
-        {
-            return m_Grid[coordinates].Neigbors[dir].IsControlBlock;
-        }
     }
 }
