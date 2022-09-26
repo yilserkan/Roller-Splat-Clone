@@ -41,10 +41,7 @@ namespace ObjectPool
         {
             T instansiated = Instantiate(prefab).GetComponent<T>();
 
-            if (instansiated != null)
-            {
-                instansiated.SetPool(m_Pool);
-            }
+            instansiated.SetPool(m_Pool);
 
             return instansiated;
         }

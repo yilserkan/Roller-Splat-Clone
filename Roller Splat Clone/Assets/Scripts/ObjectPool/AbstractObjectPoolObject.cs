@@ -12,7 +12,7 @@ namespace ObjectPool
 
         public void SetPool(IObjectPool<T> pool) => m_Pool = pool;
 
-        public void ReleaseObject()
+        public virtual void ReleaseObject()
         {
             m_Pool.Release(this as T);
         }
