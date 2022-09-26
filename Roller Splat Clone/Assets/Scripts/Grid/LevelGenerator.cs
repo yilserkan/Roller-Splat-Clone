@@ -24,6 +24,8 @@ namespace GridSystem
         private bool m_UseBothAxisOnStartingPoint;
         private int m_CycleIndex = -1;
         private Dictionary<Vector2Int, Tile> m_Grid;
+
+        public int m_PathCount = 0;
         
         private static Vector2Int NOT_FOUND = new Vector2Int(-1, -1);
         public LevelGenerator(int width, int height,Dictionary<Vector2Int, Tile> grid, bool mUseBothAxis)
@@ -55,25 +57,22 @@ namespace GridSystem
             bool triedOppositeStartDir = false;
             
             //Debug.Log(startCoordinates);
-            m_Grid[startCoordinates].IsBlocked = false;
+            //m_Grid[startCoordinates].IsBlocked = false;
             
-            int cycle = 100;
+            SetTileAsPath(m_Grid[startCoordinates]);
+            
+            int cycle = 10;
 
             for (int i = 0; i < cycle; i++)
             {
-                Debug.Log("------Cycle Index ; " + i );
                 m_CycleIndex = i;
-                Debug.Log("------Start Coords ; " + startCoordinates );
                 m_Neighbors = GetRandomDirection(startCoordinates);
-                Debug.Log("Trying Dir "+ m_Neighbors);
                 Vector2Int newCoords = NOT_FOUND;
                 
                 newCoords = UnblockTile(startCoordinates, m_Neighbors);
                 if (newCoords == NOT_FOUND)
                 {
                     m_Neighbors = FindOppositeDir(m_Neighbors);
-                    
-                    Debug.Log("Trying Dir "+ m_Neighbors);
                     newCoords = UnblockTile(startCoordinates,m_Neighbors);
                     
                     if (newCoords == NOT_FOUND)
@@ -90,8 +89,6 @@ namespace GridSystem
                             DisableControlBlock(startCoordinates,m_Neighbors);
                             newCoords = UnblockTile(startCoordinates,m_Neighbors);
                         }
-                        
-                        Debug.Log("*********************************Trying Dir  "+ m_Neighbors);
                     }
                 }
 
@@ -107,14 +104,12 @@ namespace GridSystem
                 {
                     triedOppositeStartDir = true;
                     Neighbors newDir = GetRandomDirFromOtherAxis(startDir);
-                    Debug.Log( "******************************************* Trying New Start Dir ; " + newDir );
                     newCoords = UnblockTile(startPos,newDir);
 
                     if (newCoords == NOT_FOUND)
                     {
                         newDir = FindOppositeDir(newDir);
                         newCoords = UnblockTile(startPos, newDir);
-                        Debug.Log( "******************************************* Trying New Start Dir ; " + newDir );
                         if (newCoords == NOT_FOUND)
                         {
                             break;
@@ -122,8 +117,7 @@ namespace GridSystem
                     }
                     
                     m_Neighbors = newDir;
-                    Debug.Log( "******************************************* Found New Start Dir ; " + newDir );
-                }
+               }
                 
                 if (newCoords == NOT_FOUND)
                 {
@@ -131,9 +125,6 @@ namespace GridSystem
                 }
                 
                 startCoordinates = newCoords;
-                Debug.Log( "--------- Found Dir ; " + m_Neighbors );
-                Debug.Log("Unblocking Tile " + startCoordinates );
-                Debug.Log("---------------" + i);
             }
             
             
@@ -194,8 +185,11 @@ namespace GridSystem
 
             foreach (var tile in path)
             {
-                tile.IsBlocked = false;
-                tile.LowerTilePos();
+                if (tile.IsBlocked)
+                {
+                    SetTileAsPath(tile);
+                }
+               
             }
             
             ActivateControlBlock(tileCoordinates,curTile.Coordinates,dir);
@@ -203,6 +197,13 @@ namespace GridSystem
             
         }
 
+        private void SetTileAsPath(Tile tile)
+        {
+            tile.IsBlocked = false;
+            tile.LowerTilePos();
+            m_PathCount++;
+        }
+        
         private List<Tile> FindPossibleEndPoints(Vector2Int tileCoordinates, Neighbors dir)
         {
             Tile curTile = m_Grid[tileCoordinates];
@@ -246,14 +247,10 @@ namespace GridSystem
 
         private void DisableControlBlock(Vector2Int startCoords, Neighbors dir)
         {
-            Debug.Log("*********************************Coords "+ m_Neighbors + "Dir " + dir + " cycle Index " + m_CycleIndex);
-
             if (m_Grid[startCoords].Neigbors[dir].IsControlSetIndex == m_CycleIndex-1)
             {
-                Debug.Log("*********************************Disable Control Block "+ m_Neighbors);
                 m_Grid[startCoords].Neigbors[dir].IsControlBlock = false;
             }
-            
         }
         
         private int GetMaxLength(Vector2Int coordinates, Neighbors dir)

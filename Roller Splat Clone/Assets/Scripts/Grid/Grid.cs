@@ -21,11 +21,12 @@ namespace GridSystem
         [SerializeField] private bool useBothAxisOnStartingPoint;
 
         public static event Action<List<Tile>> OnFoundPlayerPath;
-        
+        public static event Action OnLevelFinished; 
         public static event Action<Vector3> OnStartPointFound;
         private Dictionary<Vector2Int, Tile> m_Grid = new Dictionary<Vector2Int, Tile>();
 
         private LevelGenerator m_LevelGenerator;
+        private int m_ColoredTilesCount = 0;
         
         public static Dictionary<Neighbors, Vector2Int> m_Directions = new Dictionary<Neighbors, Vector2Int>()
         {
@@ -38,19 +39,37 @@ namespace GridSystem
         private void OnEnable()
         {
             PlayerStateMachine.OnPlayerEnterMoveState += HandleOnPlayerEnterMoveState;
+            Tile.OnTileColored += HandleOnTileColored;
         }
 
         private void OnDisable()
         {
             PlayerStateMachine.OnPlayerEnterMoveState -= HandleOnPlayerEnterMoveState;
+            Tile.OnTileColored -= HandleOnTileColored;
         }
-        
+
         private void Start()
         {
+            CreateLevel();
+        }
+        
+        private void CreateLevel()
+        {
+            Reset();
             CreateGrid();
             m_LevelGenerator = new LevelGenerator(width, height, m_Grid,useBothAxisOnStartingPoint);
             Vector2Int startPos = m_LevelGenerator.GenerateRandomLevel();
-            OnStartPointFound.Invoke(GetWorldPosFromCoordinates(startPos));
+            OnStartPointFound?.Invoke(GetWorldPosFromCoordinates(startPos));
+            Debug.Log("Path Count " + m_LevelGenerator.m_PathCount);
+        }
+
+        private void Reset()
+        {
+            if (m_Grid.Count > 0)
+            {
+                m_Grid.Clear();
+                m_ColoredTilesCount = 0;
+            }
         }
 
         private void CreateGrid()
@@ -188,6 +207,27 @@ namespace GridSystem
         {
             List<Tile> path = FindPlayerPath(GetCoordinatesFromWorldPos(worldPos) , dir);
             OnFoundPlayerPath?.Invoke(path);
+        }
+        
+        private void HandleOnTileColored()
+        {
+            m_ColoredTilesCount++;
+            
+            if (m_ColoredTilesCount == m_LevelGenerator.m_PathCount)
+            {
+                LevelFinished();
+                return;
+            }
+            
+            Debug.Log("Tile Colored Count " + m_ColoredTilesCount);
+        }
+
+        private void LevelFinished()
+        {
+            Debug.Log("On Next Level");
+            Reset();
+            OnLevelFinished?.Invoke();
+            CreateLevel();
         }
     }
 }

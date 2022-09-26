@@ -27,6 +27,18 @@ namespace GridSystem
         
         private MeshRenderer m_MeshRenderer;
         private bool m_PathPosSet = false;
+
+        public static event Action OnTileColored;
+
+        private void OnEnable()
+        {
+            Grid.OnLevelFinished += HandleOnLevelFinished;
+        }
+
+        private void OnDisable()
+        {
+            Grid.OnLevelFinished -= HandleOnLevelFinished;
+        }
         
         public void Init(Vector2Int coordinates, Vector3 worldPos)
         {
@@ -35,6 +47,7 @@ namespace GridSystem
             m_MeshRenderer = GetComponent<MeshRenderer>();
             IsBlocked = false;
             IsColored = false;
+            m_PathPosSet = false;
             IsControlSetIndex = -1;
             Neigbors = new Dictionary<Neighbors, Tile>()
             {
@@ -55,7 +68,12 @@ namespace GridSystem
 
         public void ColorTile(Color color)
         {
-            m_MeshRenderer.material.color = color;
+            if (!IsColored)
+            {
+                m_MeshRenderer.material.color = color;
+                IsColored = true;
+                OnTileColored?.Invoke();
+            }
         }
 
         private void Update()
@@ -78,6 +96,35 @@ namespace GridSystem
                 m_PathPosSet = true;
             }
             
+        }
+        
+        public void ResetTile()
+        {
+            m_MeshRenderer.material.color = Color.gray;
+            Coordinates = new Vector2Int(-1,-1);
+            WorldPosition = Vector3.zero;
+            IsBlocked = false;
+            IsColored = false;
+            IsControlSetIndex = -1;
+            m_PathPosSet = false;
+            Neigbors = new Dictionary<Neighbors, Tile>()
+            {
+                { Neighbors.Up, null },
+                { Neighbors.Down, null },
+                { Neighbors.Left, null },
+                { Neighbors.Right, null }
+            };
+        }
+        
+        private void HandleOnLevelFinished()
+        {
+            ReleaseObject();
+        }
+
+        public override void ReleaseObject()
+        {
+            ResetTile();
+            base.ReleaseObject();
         }
     }
 }
