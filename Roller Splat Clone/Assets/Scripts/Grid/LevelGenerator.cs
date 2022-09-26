@@ -10,6 +10,7 @@ namespace GridSystem
     {
         private int m_Width;
         private int m_Height;
+        private int m_Cycles;
 
         private int m_XTileStartIndex;
         private int m_XTileEndIndex;
@@ -28,11 +29,12 @@ namespace GridSystem
         public int m_PathCount = 0;
         
         private static Vector2Int NOT_FOUND = new Vector2Int(-1, -1);
-        public LevelGenerator(int width, int height,Dictionary<Vector2Int, Tile> grid, bool mUseBothAxis)
+        public LevelGenerator(int width, int height,int cycles ,Dictionary<Vector2Int, Tile> grid, bool mUseBothAxis)
         {
             m_Height = height;
             m_Width = width;
-
+            m_Cycles = cycles;
+            
             m_Grid = grid;
 
             m_UseBothAxisOnStartingPoint = mUseBothAxis;
@@ -61,9 +63,8 @@ namespace GridSystem
             
             SetTileAsPath(m_Grid[startCoordinates]);
             
-            int cycle = 10;
 
-            for (int i = 0; i < cycle; i++)
+            for (int i = 0; i < m_Cycles; i++)
             {
                 m_CycleIndex = i;
                 m_Neighbors = GetRandomDirection(startCoordinates);
