@@ -12,15 +12,13 @@ namespace Player
   
         public override void OnEnter(PlayerStateMachine stateMachine)
         {
-            // Move Ball in dir 
-            //Debug.Log($"Move Ball in direction {stateMachine.SwipeDir}");
             stateMachine.InvokeOnPlayerEnterMoveState();
             m_CurrentPathIndex = 0;
         }
 
         public override void OnUpdate(PlayerStateMachine stateMachine)
         {
-            if (stateMachine.Path.Count == 0)
+            if (stateMachine.IsPathEmpty)
             {
               stateMachine.SwitchState(PlayerStates.Idle);
               return;
@@ -31,27 +29,26 @@ namespace Player
             
             void MovePlayer()
             {
-                //stateMachine.transform.Translate( stateMachine.MoveSpeed* stateMachine.DeltaTime*stateMachine.SwipeDir, Space.World);
                 Tile targetTile = stateMachine.Path[m_CurrentPathIndex];
-                Vector3 targetPos = targetTile.WorldPosition;
-                targetPos.y = stateMachine.transform.position.y;
-                stateMachine.transform.position = Vector3.MoveTowards(stateMachine.transform.position, targetPos,
+                
+                Vector3 targetTilePos = targetTile.WorldPosition;
+                targetTilePos.y = stateMachine.transform.position.y;
+                
+                stateMachine.transform.position = Vector3.MoveTowards(stateMachine.transform.position, targetTilePos,
                     stateMachine.DeltaTime * stateMachine.MoveSpeed);
                 
-                if (Vector3.Distance(stateMachine.transform.position, targetPos) < 0.1)
+                if (stateMachine.HasPlayerPassedTile(targetTilePos))
                 {
                     targetTile.ColorTile(Color.green);
                     
-                    if (stateMachine.Path.Count > m_CurrentPathIndex+1)
+                    if (stateMachine.IsPathFinished(m_CurrentPathIndex+1))
                     {
                         m_CurrentPathIndex++;
                     }
                     else
                     {
                         stateMachine.SwitchState(PlayerStates.Idle);
-                    }  
-                    
-                    //Debug.Log($"Moving to {m_CurrentPathIndex}");
+                    }
                 }
             }
 
@@ -65,8 +62,6 @@ namespace Player
 
         public override void OnExit(PlayerStateMachine stateMachine)
         {
-            // Stop Ball On Exit Or On Collision
-            //Debug.Log("Stop Ball");
             stateMachine.Path = null;
         }
     }

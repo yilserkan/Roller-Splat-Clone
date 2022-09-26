@@ -1033,10 +1033,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   initialState: 1
   inputSystem: {fileID: 975984299}
-  raycastMultiplicator: 0.5
-  moveSpeed: 10
-  rotateAngle: 5
-  maxDistance: 0.5
+  playerSettings: {fileID: 11400000, guid: da6a130422081604aa5d8376846fbc1f, type: 2}
 --- !u!1 &1088720762
 GameObject:
   m_ObjectHideFlags: 0

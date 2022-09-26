@@ -25,7 +25,6 @@ namespace Utils
                         }
                     }
 
-
                     if (m_Instance == null)
                     {
                         var ob = new GameObject();

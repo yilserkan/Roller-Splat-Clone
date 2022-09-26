@@ -18,22 +18,26 @@ namespace Player
     {
         [SerializeField] private PlayerStates initialState;
         [SerializeField] private PlayerInputSystem inputSystem;
-        [SerializeField] private float raycastMultiplicator = 0.5f;
-        [SerializeField] private float moveSpeed;
-        [SerializeField] private float rotateAngle;
-        [SerializeField] private float maxDistance = 0.5f;
-
+        [SerializeField] private PlayerSettings playerSettings;
+        
         private PlayerStates m_CurrentPlayerState = PlayerStates.None;
         private PlayerBaseStat m_CurrentBaseState;
         private PlayerMoveState m_PlayerMoveState;
         private PlayerMoveState m_PlayerStopState;
         
-        private Vector2Int m_swipeDir;
+        private Vector2Int m_SwipeDir;
         private List<Tile> m_Path;
+        
         public Vector2Int SwipeDir
         {
-            get { return  m_swipeDir; }
-            private set { m_swipeDir = value; }
+            get
+            {
+                return  m_SwipeDir;
+            }
+            private set
+            {
+                m_SwipeDir = value;
+            }
         }
 
         public List<Tile> Path
@@ -48,39 +52,21 @@ namespace Player
             }
         }
 
-        public float MaxDistance
-        {
-            get { return maxDistance; }
-        }
-
-        public float RotateAngle
-        {
-            get
-            {
-                return rotateAngle;
-            }
-        }
-        public float RaycastMultiplicator
-        {
-            get
-            {
-                return raycastMultiplicator;
-            }
-        }
-
-        public float MoveSpeed
-        {
-            get
-            {
-                return moveSpeed;
-            }
-        }
-        
-        public float DeltaTime => Time.deltaTime;
-
-        public static event Action<Vector3, Vector2Int> OnPlayerEnterMoveState;
-
+        public void EnablePlayerInputs() => inputSystem.EnablePlayerInputs();
+        public void DisablePlayerInputs() => inputSystem.DisablePlayerInputs();
+        private void OnStateEnter() => m_CurrentBaseState?.OnEnter(this);
+        private void OnStateExit() => m_CurrentBaseState?.OnExit(this);
+        private bool StateChanged(PlayerStates newState) => newState != m_CurrentPlayerState;
         public void InvokeOnPlayerEnterMoveState() => OnPlayerEnterMoveState?.Invoke(transform.position,SwipeDir);
+        public float MaxDistance => playerSettings.MaxDistance;
+        public float RotateAngle => playerSettings.RotateAngle;
+        public float RaycastMultiplicator => playerSettings.RaycastMultiplicator;
+        public float MoveSpeed =>  playerSettings.MoveSpeed;
+        public float DeltaTime => Time.deltaTime;
+        public bool IsPathEmpty => Path.Count == 0;
+        public bool IsPathFinished(int currentPathIndex) => Path.Count > currentPathIndex;
+        public bool HasPlayerPassedTile(Vector3 tilePos) => (tilePos - transform.position).sqrMagnitude < 0.1 * 0.1;
+        public static event Action<Vector3, Vector2Int> OnPlayerEnterMoveState;
 
         private Dictionary<PlayerStates, PlayerBaseStat> m_State = 
             new Dictionary<PlayerStates, PlayerBaseStat>()
@@ -91,26 +77,16 @@ namespace Player
 
         private void OnEnable()
         {
-            PlayerInputSystem.OnPlayerSwipe += HandleOnPlayerSwipe;
-            Grid.OnFoundPlayerPath += HandleOnFoundPlayerPath;
-            Grid.OnStartPointFound += HandleOnPlayerPosFound;
+            AddListeners();
         }
         
         private void OnDisable()
         {
-            PlayerInputSystem.OnPlayerSwipe -= HandleOnPlayerSwipe;
-            Grid.OnFoundPlayerPath -= HandleOnFoundPlayerPath;
-            Grid.OnStartPointFound -= HandleOnPlayerPosFound;
+            RemoveListeners();
         }
-
-        private void HandleOnPlayerPosFound(Vector3 position)
-        {
-            transform.position = position;
-        }
-
+        
         void Start()
         {
-            //transform.position = new Vector3(0,1,0);
             SwitchState(initialState);
         }
 
@@ -118,36 +94,34 @@ namespace Player
         {
             OnUpdate();
         }
-
-        private void FixedUpdate()
-        {
-            OnFixedUpdate();
-        }
-
-        public void SwitchState(PlayerStates newState)
-        {
-            if (newState == m_CurrentPlayerState)
-            {
-                return;
-            }
-            
-            m_CurrentBaseState?.OnExit(this);
-            m_CurrentPlayerState = newState;
-            m_CurrentBaseState = m_State[m_CurrentPlayerState];
-            m_CurrentBaseState?.OnEnter(this);
-        }
-        
         private void OnUpdate()
         {
             m_CurrentBaseState?.OnUpdate(this);
         }
         
-        private void OnFixedUpdate()
+        public void SwitchState(PlayerStates newState)
         {
-            m_CurrentBaseState?.OnFixedUpdate(this);
+            if (!StateChanged(newState))
+            {
+                return;
+            }
+            
+            OnStateExit();
+            ChangeState(newState);
+            OnStateEnter();
         }
 
+        private void ChangeState(PlayerStates newState)
+        {
+            m_CurrentPlayerState = newState;
+            m_CurrentBaseState = m_State[m_CurrentPlayerState];
+        }
         
+        private void HandleOnPlayerPosFound(Vector3 position)
+        {
+            transform.position = position;
+        }
+
         private void HandleOnPlayerSwipe(Vector2Int swipeDir)
         {
             SwipeDir = swipeDir;
@@ -158,16 +132,19 @@ namespace Player
         {
             Path = path;
         }
-
-        public void EnablePlayerInputs()
+        
+        private void AddListeners()
         {
-            inputSystem.enabled = true;
+            PlayerInputSystem.OnPlayerSwipe += HandleOnPlayerSwipe;
+            Grid.OnFoundPlayerPath += HandleOnFoundPlayerPath;
+            Grid.OnStartPointFound += HandleOnPlayerPosFound;
         }
 
-        public void DisablePlayerInputs()
+        private void RemoveListeners()
         {
-            inputSystem.ResetTouchStartPosition();
-            inputSystem.enabled = false;
+            PlayerInputSystem.OnPlayerSwipe -= HandleOnPlayerSwipe;
+            Grid.OnFoundPlayerPath -= HandleOnFoundPlayerPath;
+            Grid.OnStartPointFound -= HandleOnPlayerPosFound;
         }
     }
 }

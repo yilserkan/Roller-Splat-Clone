@@ -28,7 +28,6 @@ namespace Player
         {
             if (IsTouching)
             {
-                //Debug.Log("IsTouching");
                 Touch touch = Input.GetTouch(0);
                 Vector2 touchPosition = touch.position;
 
@@ -65,9 +64,11 @@ namespace Player
             {
                 swipeDir = new Vector2( 0,swipeDir.y).normalized;
             }
-            //Debug.Log(swipeDir);
-            return new Vector2Int(Mathf.RoundToInt(
-                swipeDir.x), Mathf.RoundToInt(swipeDir.y));
+
+            return new Vector2Int(
+                Mathf.RoundToInt(swipeDir.x), 
+                Mathf.RoundToInt(swipeDir.y)
+                );
         }
         
         private void SetIsTouching(bool value)
@@ -87,6 +88,17 @@ namespace Player
         {
             SetIsTouching(false);
             m_StartTouchPosition = Vector2.zero;
+        }
+        
+        public void EnablePlayerInputs()
+        {
+            enabled = true;
+        }
+
+        public void DisablePlayerInputs()
+        {
+            ResetTouchStartPosition();
+            enabled = false;
         }
     }
 }
