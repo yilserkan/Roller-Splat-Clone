@@ -32,12 +32,12 @@ namespace GridSystem
 
         private void OnEnable()
         {
-            Grid.OnLevelFinished += HandleOnLevelFinished;
+            Grid.OnResetTiles += HandleOnResetTiles;
         }
 
         private void OnDisable()
         {
-            Grid.OnLevelFinished -= HandleOnLevelFinished;
+            Grid.OnResetTiles -= HandleOnResetTiles;
         }
         
         public void Init(Vector2Int coordinates, Vector3 worldPos)
@@ -116,7 +116,7 @@ namespace GridSystem
             };
         }
         
-        private void HandleOnLevelFinished()
+        private void HandleOnResetTiles()
         {
             ReleaseObject();
         }

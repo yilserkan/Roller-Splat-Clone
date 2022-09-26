@@ -15,6 +15,7 @@ namespace GridSystem
     {
         [SerializeField] private int height;
         [SerializeField] private int width;
+        [SerializeField] private int cycles;
         [SerializeField] private int cellsize;
         [SerializeField] private Vector3 gridStartPosition;
         [SerializeField] private GameObject prefab;
@@ -22,6 +23,7 @@ namespace GridSystem
 
         public static event Action<List<Tile>> OnFoundPlayerPath;
         public static event Action OnLevelFinished; 
+        public static event Action OnResetTiles; 
         public static event Action<Vector3> OnStartPointFound;
         private Dictionary<Vector2Int, Tile> m_Grid = new Dictionary<Vector2Int, Tile>();
 
@@ -40,24 +42,38 @@ namespace GridSystem
         {
             PlayerStateMachine.OnPlayerEnterMoveState += HandleOnPlayerEnterMoveState;
             Tile.OnTileColored += HandleOnTileColored;
+            LevelGeneratorUI.OnGenerateLevel += HandleOnGenerateLevel;
+            LevelManager.OnGenerateLevel += HandleOnGenerateLevel;
         }
 
         private void OnDisable()
         {
             PlayerStateMachine.OnPlayerEnterMoveState -= HandleOnPlayerEnterMoveState;
             Tile.OnTileColored -= HandleOnTileColored;
+            LevelGeneratorUI.OnGenerateLevel -= HandleOnGenerateLevel;
+            LevelManager.OnGenerateLevel -= HandleOnGenerateLevel;
+        }
+
+        private void HandleOnGenerateLevel(Level level)
+        {
+            //OnResetTiles?.Invoke();
+            height = level.Height;
+            width = level.Width;
+            cycles = level.Cycles;
+            Random.InitState(level.Seed);
+            CreateLevel();
         }
 
         private void Start()
         {
-            CreateLevel();
+            //CreateLevel();
         }
         
         private void CreateLevel()
         {
             Reset();
             CreateGrid();
-            m_LevelGenerator = new LevelGenerator(width, height, m_Grid,useBothAxisOnStartingPoint);
+            m_LevelGenerator = new LevelGenerator(width, height,cycles, m_Grid,useBothAxisOnStartingPoint);
             Vector2Int startPos = m_LevelGenerator.GenerateRandomLevel();
             OnStartPointFound?.Invoke(GetWorldPosFromCoordinates(startPos));
             Debug.Log("Path Count " + m_LevelGenerator.m_PathCount);
@@ -226,8 +242,8 @@ namespace GridSystem
         {
             Debug.Log("On Next Level");
             Reset();
+            OnResetTiles?.Invoke();
             OnLevelFinished?.Invoke();
-            CreateLevel();
         }
     }
 }
