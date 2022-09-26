@@ -13,12 +13,12 @@ namespace Player
         public override void OnEnter(PlayerStateMachine stateMachine)
         {
             // Move Ball in dir 
-            Debug.Log($"Move Ball in direction {stateMachine.SwipeDir}");
+            //Debug.Log($"Move Ball in direction {stateMachine.SwipeDir}");
             stateMachine.InvokeOnPlayerEnterMoveState();
             m_CurrentPathIndex = 0;
         }
 
-        public override void OnFixedUpdate(PlayerStateMachine stateMachine)
+        public override void OnUpdate(PlayerStateMachine stateMachine)
         {
             if (stateMachine.Path.Count == 0)
             {
@@ -45,7 +45,6 @@ namespace Player
                     if (stateMachine.Path.Count > m_CurrentPathIndex+1)
                     {
                         m_CurrentPathIndex++;
-                        Debug.Log(m_CurrentPathIndex);
                     }
                     else
                     {
@@ -67,13 +66,8 @@ namespace Player
         public override void OnExit(PlayerStateMachine stateMachine)
         {
             // Stop Ball On Exit Or On Collision
-            Debug.Log("Stop Ball");
+            //Debug.Log("Stop Ball");
             stateMachine.Path = null;
-        }
-
-        public override void OnCollisionEnter(PlayerStateMachine stateMachine, Collision collision)
-        {
-            // Stop Ball On Exit Or On Collision
         }
     }
 }

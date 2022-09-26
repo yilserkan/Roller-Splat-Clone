@@ -10,6 +10,6 @@ namespace Player
         public virtual void OnUpdate(PlayerStateMachine stateMachine){}
         public virtual void OnFixedUpdate(PlayerStateMachine stateMachine){}
         public virtual void OnExit(PlayerStateMachine stateMachine){}
-        public virtual void OnCollisionEnter(PlayerStateMachine stateMachine, Collision collision){}
+
     }
 }

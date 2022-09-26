@@ -103,10 +103,9 @@ namespace Player
             Grid.OnStartPointFound -= HandleOnPlayerPosFound;
         }
 
-        private void HandleOnPlayerPosFound(Vector3 obj)
+        private void HandleOnPlayerPosFound(Vector3 position)
         {
-            Vector3 startPos = obj;
-            transform.position = startPos;
+            transform.position = position;
         }
 
         void Start()
@@ -124,11 +123,6 @@ namespace Player
         {
             OnFixedUpdate();
         }
-        
-        private void OnCollisionEnter(Collision collision)
-        {
-            OnCollided(collision);
-        }
 
         public void SwitchState(PlayerStates newState)
         {
@@ -143,11 +137,6 @@ namespace Player
             m_CurrentBaseState?.OnEnter(this);
         }
         
-        private void OnCollided(Collision collision)
-        {
-            m_CurrentBaseState?.OnCollisionEnter(this, collision);
-        }
-
         private void OnUpdate()
         {
             m_CurrentBaseState?.OnUpdate(this);
