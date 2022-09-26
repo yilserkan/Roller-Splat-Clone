@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using ObjectPool;
 using Player;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -60,7 +61,7 @@ namespace GridSystem
                 {
                     Vector2Int coordinates = new Vector2Int(x, y);
                     Vector3 worldPos = GetWorldPosFromCoordinates(coordinates);
-                    Tile tile = Instantiate(prefab, worldPos, Quaternion.identity,transform).GetComponent<Tile>();
+                    var tile = TileSpawner.Instance.OnObjectPool(worldPos);
                     tile.gameObject.name = $"({coordinates.x},{coordinates.y})";
                     tile.Init(coordinates,worldPos);
                     m_Grid.Add(coordinates,tile);

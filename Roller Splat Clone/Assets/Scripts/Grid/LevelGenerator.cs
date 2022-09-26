@@ -196,6 +196,7 @@ namespace GridSystem
             foreach (var tile in path)
             {
                 tile.IsBlocked = false;
+                tile.LowerTilePos();
             }
             
             ActivateControlBlock(tileCoordinates,curTile.Coordinates,dir);

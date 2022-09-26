@@ -8,6 +8,7 @@ namespace ObjectPool
         where T : AbstractObjectPoolObject<T>
         where G : Component
     {
+        [SerializeField] private Transform poolParent;
         [SerializeField] private GameObject prefab;
         [SerializeField] private int poolDefaultCapacity;
         [SerializeField] private int poolMaxCapacity;
@@ -27,11 +28,13 @@ namespace ObjectPool
             );
         }
 
-        public void OnObjectPool(Vector3 position)
+        public T OnObjectPool(Vector3 position)
         {
             var pooled = m_Pool.Get();
-
             pooled.transform.position = position;
+            pooled.transform.parent = poolParent;
+            
+            return pooled;
         }
 
         private T OnCreateObject()

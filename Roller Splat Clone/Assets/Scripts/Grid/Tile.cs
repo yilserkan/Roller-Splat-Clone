@@ -24,8 +24,9 @@ namespace GridSystem
         public bool IsColored;
         public int IsControlSetIndex;
         public Dictionary<Neighbors, Tile> Neigbors;
-
+        
         private MeshRenderer m_MeshRenderer;
+        private bool m_PathPosSet = false;
         
         public void Init(Vector2Int coordinates, Vector3 worldPos)
         {
@@ -67,6 +68,16 @@ namespace GridSystem
             {
                 m_MeshRenderer.material.color = Color.red;
             }
+        }
+
+        public void LowerTilePos()
+        {
+            if (!m_PathPosSet)
+            {
+                transform.position += Vector3.down;
+                m_PathPosSet = true;
+            }
+            
         }
     }
 }
