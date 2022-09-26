@@ -11,42 +11,41 @@ namespace GridSystem
         private int m_Width;
         private int m_Height;
 
-        private int xTileStartIndex;
-        private int xTileEndIndex;
-        private int yTileStartIndex;
-        private int yTileEndIndex;
-        
-        private static Vector2Int NOT_FOUND = new Vector2Int(-1, -1);
-        
+        private int m_XTileStartIndex;
+        private int m_XTileEndIndex;
+        private int m_YTileStartIndex;
+        private int m_YTileEndIndex;
+
         private Neighbors m_Neighbors;
         private Neighbors m_PrevNeighbor;
-        private bool isInitialized = false;
-        private bool prevInitialized = false;
-        private bool startTile = true;
-        private bool useBothAxisOnStartingPoint;
-        private int cycleIndex = -1;
+        private bool m_IsInitialized = false;
+        private bool m_PrevInitialized = false;
+        private bool m_StartTile = true;
+        private bool m_UseBothAxisOnStartingPoint;
+        private int m_CycleIndex = -1;
         private Dictionary<Vector2Int, Tile> m_Grid;
-
-        public LevelGenerator(int width, int height,Dictionary<Vector2Int, Tile> grid, bool useBothAxis)
+        
+        private static Vector2Int NOT_FOUND = new Vector2Int(-1, -1);
+        public LevelGenerator(int width, int height,Dictionary<Vector2Int, Tile> grid, bool mUseBothAxis)
         {
             m_Height = height;
             m_Width = width;
 
             m_Grid = grid;
 
-            useBothAxisOnStartingPoint = useBothAxis;
+            m_UseBothAxisOnStartingPoint = mUseBothAxis;
 
-            xTileStartIndex = 1;
-            yTileStartIndex = 1;
+            m_XTileStartIndex = 1;
+            m_YTileStartIndex = 1;
 
-            xTileEndIndex = width - 2;
-            yTileEndIndex = height - 2;
+            m_XTileEndIndex = width - 2;
+            m_YTileEndIndex = height - 2;
         }
         
         public Vector2Int GenerateRandomLevel()
         {
-            int randomX = Random.Range(xTileStartIndex, xTileEndIndex);
-            int randomY = Random.Range(yTileStartIndex, yTileEndIndex);
+            int randomX = Random.Range(m_XTileStartIndex, m_XTileEndIndex);
+            int randomY = Random.Range(m_YTileStartIndex, m_YTileEndIndex);
             
             Vector2Int startCoordinates = new Vector2Int(randomX, randomY);
             Vector2Int startPos = startCoordinates;
@@ -63,7 +62,7 @@ namespace GridSystem
             for (int i = 0; i < cycle; i++)
             {
                 Debug.Log("------Cycle Index ; " + i );
-                cycleIndex = i;
+                m_CycleIndex = i;
                 Debug.Log("------Start Coords ; " + startCoordinates );
                 m_Neighbors = GetRandomDirection(startCoordinates);
                 Debug.Log("Trying Dir "+ m_Neighbors);
@@ -79,7 +78,7 @@ namespace GridSystem
                     
                     if (newCoords == NOT_FOUND)
                     {
-                        if (prevInitialized)
+                        if (m_PrevInitialized)
                         {
                             m_Neighbors = m_PrevNeighbor;
                             DisableControlBlock(startCoordinates,m_Neighbors);
@@ -102,9 +101,9 @@ namespace GridSystem
                     startDirInitialized = true;
                 }
                 
-                prevInitialized = true;
+                m_PrevInitialized = true;
                 m_PrevNeighbor = m_Neighbors;
-                if (newCoords == NOT_FOUND && !triedOppositeStartDir && useBothAxisOnStartingPoint)
+                if (newCoords == NOT_FOUND && !triedOppositeStartDir && m_UseBothAxisOnStartingPoint)
                 {
                     triedOppositeStartDir = true;
                     Neighbors newDir = GetRandomDirFromOtherAxis(startDir);
@@ -234,22 +233,22 @@ namespace GridSystem
         {
             if (m_Grid[endCoords].Neigbors[dir].IsBlocked)
             {
-                m_Grid[endCoords].Neigbors[dir].SetControlIndex(cycleIndex);
+                m_Grid[endCoords].Neigbors[dir].SetControlIndex(m_CycleIndex);
                 m_Grid[endCoords].Neigbors[dir].IsControlBlock = true;
             }
 
             
             Neighbors nb = FindOppositeDir(dir);
             m_Grid[startCoords].Neigbors[nb].IsControlBlock = true;
-            m_Grid[startCoords].Neigbors[nb].SetControlIndex(cycleIndex);
+            m_Grid[startCoords].Neigbors[nb].SetControlIndex(m_CycleIndex);
             
         }
 
         private void DisableControlBlock(Vector2Int startCoords, Neighbors dir)
         {
-            Debug.Log("*********************************Coords "+ m_Neighbors + "Dir " + dir + " cycle Index " + cycleIndex);
+            Debug.Log("*********************************Coords "+ m_Neighbors + "Dir " + dir + " cycle Index " + m_CycleIndex);
 
-            if (m_Grid[startCoords].Neigbors[dir].IsControlSetIndex == cycleIndex-1)
+            if (m_Grid[startCoords].Neigbors[dir].IsControlSetIndex == m_CycleIndex-1)
             {
                 Debug.Log("*********************************Disable Control Block "+ m_Neighbors);
                 m_Grid[startCoords].Neigbors[dir].IsControlBlock = false;
@@ -263,13 +262,13 @@ namespace GridSystem
             switch (dir)
             {
                 case Neighbors.Up:
-                    length = (yTileEndIndex + 1) - coordinates.y;
+                    length = (m_YTileEndIndex + 1) - coordinates.y;
                     break;
                 case Neighbors.Down:
                     length = coordinates.y;
                     break;
                 case Neighbors.Right:
-                    length = (xTileEndIndex + 1) - coordinates.x;
+                    length = (m_XTileEndIndex + 1) - coordinates.x;
                     break;
                 case Neighbors.Left:
                     length = coordinates.x;
@@ -280,12 +279,12 @@ namespace GridSystem
         
         public Neighbors GetRandomDirection(Vector2Int coords)
         {
-            if (!isInitialized)
+            if (!m_IsInitialized)
             {
                 int directionCount = Enum.GetNames(typeof(Neighbors)).Length;
                 int randomDirection = Random.Range(0, directionCount);
                 Neighbors randomNeighbor = (Neighbors)randomDirection;
-                isInitialized = true;
+                m_IsInitialized = true;
                 return randomNeighbor;
             }
             
@@ -338,7 +337,7 @@ namespace GridSystem
         
         public bool IsEdge(Vector2Int coord)
         {
-            if (coord.x != xTileStartIndex && coord.x != xTileEndIndex && coord.y != yTileStartIndex && coord.y != yTileEndIndex)
+            if (coord.x != m_XTileStartIndex && coord.x != m_XTileEndIndex && coord.y != m_YTileStartIndex && coord.y != m_YTileEndIndex)
             {
                 return false;
             }
