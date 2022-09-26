@@ -5,45 +5,57 @@ using Json;
 using UnityEngine;
 using Grid = GridSystem.Grid;
 
-public class LevelManager : MonoBehaviour
+namespace LevelSystem
 {
-    private int m_LevelIndex = 0;
-    private List<Level> m_Levels;
-    
-    public static event Action<Level> OnGenerateLevel;
+    public class LevelManager : MonoBehaviour
+    {
+        private int m_LevelIndex = 0;
+        
+        private List<Level> m_Levels;
+        public static event Action<Level> OnGenerateLevel;
 
-    private void OnEnable()
-    {
-        Grid.OnLevelFinished += HandleOnLevelFinished;
-    }
-
-    private void OnDisable()
-    {
-        Grid.OnLevelFinished -= HandleOnLevelFinished;
-    }
-
-    private void Start()
-    {
-        m_Levels = JSONSaveSystem.ReadFromJson<Level>();
-        Debug.Log("------------------Level Count;" + m_Levels.Count);
-        GenerateNewLevel();
-    }
-    
-    private void HandleOnLevelFinished()
-    {
-        m_LevelIndex++;
-        GenerateNewLevel();
-    }
-
-    private void GenerateNewLevel()
-    {
-        if (m_LevelIndex < m_Levels.Count)
+        private bool HasUnplayedLevels => m_LevelIndex < m_Levels.Count;
+        private void ReadLevelsFromJson() => m_Levels = JSONSaveSystem.ReadFromJson<Level>();
+        
+        private void OnEnable()
         {
-            Debug.Log("*------------------------- Level Finished");
-            OnGenerateLevel?.Invoke(m_Levels[m_LevelIndex]);
-            return;
+            AddListeners();
         }
-        // Go To Main Menu
+
+        private void OnDisable()
+        {
+            RemoveListeners();
+        }
+
+        private void Start()
+        {
+            ReadLevelsFromJson();
+            GenerateNewLevel();
+        }
+        
+        private void GenerateNewLevel()
+        {
+            if (HasUnplayedLevels)
+            {
+                Debug.Log("*------------------------- Level Finished");
+                OnGenerateLevel?.Invoke(m_Levels[m_LevelIndex]);
+                return;
+            }
+            // Go To Main Menu
+        }
+        private void HandleOnLevelFinished()
+        {
+            m_LevelIndex++;
+            GenerateNewLevel();
+        }
+        private void AddListeners()
+        {
+            Grid.OnLevelFinished += HandleOnLevelFinished;
+        }
+
+        private void RemoveListeners()
+        {
+            Grid.OnLevelFinished -= HandleOnLevelFinished;
+        }
     }
-    
 }

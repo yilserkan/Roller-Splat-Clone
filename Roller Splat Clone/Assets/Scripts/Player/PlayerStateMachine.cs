@@ -30,26 +30,16 @@ namespace Player
         
         public Vector2Int SwipeDir
         {
-            get
-            {
-                return  m_SwipeDir;
-            }
-            private set
-            {
-                m_SwipeDir = value;
-            }
+            get => m_SwipeDir;
+            private set => m_SwipeDir = value;
         }
 
         public List<Tile> Path
         {
-            get
-            {
-                return m_Path;
-            }
-            set
-            {
-                m_Path = value;
-            }
+            get => m_Path;
+            
+            set => m_Path = value;
+            
         }
 
         public void EnablePlayerInputs() => inputSystem.EnablePlayerInputs();

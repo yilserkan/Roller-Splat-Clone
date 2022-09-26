@@ -4,20 +4,22 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[Serializable]
-
-public class Level
+namespace LevelSystem
 {
-   public int Height;
-   public int Width;
-   public int Cycles;
-   public int Seed;
-
-   public Level(int height, int width, int cycles, int seed)
+   [Serializable]
+   public class Level
    {
-      Height = height;
-      Width = width;
-      Cycles = cycles;
-      Seed = seed;
+      public int Height;
+      public int Width;
+      public int Cycles;
+      public int Seed;
+
+      public Level(int height, int width, int cycles, int seed)
+      {
+         Height = height;
+         Width = width;
+         Cycles = cycles;
+         Seed = seed;
+      }
    }
 }

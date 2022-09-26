@@ -29,7 +29,7 @@ namespace Utils
                     {
                         var ob = new GameObject();
                         ob.name = nameof(T);
-
+                        
                         var singelton = ob.AddComponent<T>();
                         m_Instance = singelton;
                     }

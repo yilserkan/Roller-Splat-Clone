@@ -438,7 +438,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 621439732}
         m_TargetAssemblyTypeName: LevelGeneratorUI, Assembly-CSharp
-        m_MethodName: GenerateLevel
+        m_MethodName: _GenerateLevel
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1398,9 +1398,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3a8e5e3fb7c7a0e40bb57462e47fd85c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  heightIF: {fileID: 1152270611}
-  widthIF: {fileID: 1354200654}
-  cyclesIF: {fileID: 2049148737}
+  heightInputField: {fileID: 1152270611}
+  widthInputField: {fileID: 1354200654}
+  cyclesInputField: {fileID: 2049148737}
 --- !u!114 &621439733
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2024,7 +2024,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 621439732}
         m_TargetAssemblyTypeName: LevelGeneratorUI, Assembly-CSharp
-        m_MethodName: SaveLevel
+        m_MethodName: _SaveLevel
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

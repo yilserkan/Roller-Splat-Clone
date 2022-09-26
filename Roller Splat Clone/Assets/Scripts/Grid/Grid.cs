@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using LevelSystem;
 using ObjectPool;
 using Player;
 using Unity.VisualScripting;
@@ -30,12 +31,12 @@ namespace GridSystem
         private LevelGenerator m_LevelGenerator;
         private int m_ColoredTilesCount = 0;
         
-        public static Dictionary<Neighbors, Vector2Int> m_Directions = new Dictionary<Neighbors, Vector2Int>()
+        public static Dictionary<Direction, Vector2Int> m_Directions = new Dictionary<Direction, Vector2Int>()
         {
-            { Neighbors.Up, new Vector2Int(0, 1) },
-            { Neighbors.Down, new Vector2Int(0, -1) },
-            { Neighbors.Right, new Vector2Int(1, 0) },
-            { Neighbors.Left, new Vector2Int(-1, 0) }
+            { Direction.Up, new Vector2Int(0, 1) },
+            { Direction.Down, new Vector2Int(0, -1) },
+            { Direction.Right, new Vector2Int(1, 0) },
+            { Direction.Left, new Vector2Int(-1, 0) }
         };
 
         private void OnEnable()
@@ -107,11 +108,6 @@ namespace GridSystem
            
         }
         
-        public Vector3 GetWorldPosition(int x, int y)
-        {
-            return new Vector3(x,y) * cellsize;
-        }
-
         public Vector3 GetWorldPosFromCoordinates(Vector2Int coordinates)
         {
             float posX = gridStartPosition.x + coordinates.x * cellsize;
