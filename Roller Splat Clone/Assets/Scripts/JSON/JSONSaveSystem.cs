@@ -4,56 +4,59 @@ using System.IO;
 using System.Linq;
 using UnityEngine;
 
-public static class JSONSaveSystem
+namespace Json
 {
-    public static string filename = "Levels.json";
-
-    public static void SaveToJSON<T>(List<T> saveData, bool prettyPrint)
+    public static class JSONSaveSystem
     {
-        List<T> dataInJson = ReadFromJson<T>();
-        string content = JsonHelper.ToJson(saveData, prettyPrint, dataInJson);
-        WriteFile(GetPath(), content);
-    }
+        public static string filename = "Levels.json";
 
-    public static List<T> ReadFromJson<T>()
-    {
-        string content = ReadFile(GetPath());
-        if (string.IsNullOrEmpty(content)|| content == "")
+        public static void SaveToJSON<T>(T saveData, bool prettyPrint)
         {
-            return new List<T>();
+            List<T> dataInJson = ReadFromJson<T>();
+            string content = JsonHelper.ToJson(saveData, prettyPrint, dataInJson);
+            WriteFile(GetPath(), content);
         }
 
-        List<T> res = JsonHelper.FromJson<T>(content).ToList();
-
-        return res;
-    }
-
-    private static string GetPath()
-    {
-        return Application.dataPath + "/JSON Files/" + filename;
-    }
-
-    private static void WriteFile(string path, string content)
-    {
-        FileStream fileStream = new FileStream(path, FileMode.Create);
-
-        using (StreamWriter writer = new StreamWriter(fileStream))
+        public static List<T> ReadFromJson<T>()
         {
-            writer.Write(content);            
-        }
-    }
-
-    public static string ReadFile(string path)
-    {
-        if (File.Exists(path))
-        {
-            using (StreamReader reader = new StreamReader(path))
+            string content = ReadFile(GetPath());
+            if (string.IsNullOrEmpty(content) || content == "")
             {
-                string content = reader.ReadToEnd();
-                return content;
+                return new List<T>();
+            }
+
+            List<T> res = JsonHelper.FromJson<T>(content).ToList();
+
+            return res;
+        }
+
+        private static string GetPath()
+        {
+            return Application.dataPath + "/JSON Files/" + filename;
+        }
+
+        private static void WriteFile(string path, string content)
+        {
+            FileStream fileStream = new FileStream(path, FileMode.Create);
+
+            using (StreamWriter writer = new StreamWriter(fileStream))
+            {
+                writer.Write(content);
             }
         }
 
-        return "";
+        public static string ReadFile(string path)
+        {
+            if (File.Exists(path))
+            {
+                using (StreamReader reader = new StreamReader(path))
+                {
+                    string content = reader.ReadToEnd();
+                    return content;
+                }
+            }
+
+            return "";
+        }
     }
 }
