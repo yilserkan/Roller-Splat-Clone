@@ -70,6 +70,8 @@ namespace GridSystem
             m_LevelGenerator = new LevelGenerator(width, height,cycles, m_Grid,useBothAxisOnStartingPoint);
             Vector2Int startPos = m_LevelGenerator.GenerateRandomLevel();
             
+            Debug.Log("Start Tile Coords " + startPos + " Pos " +GetWorldPosFromCoordinates(startPos));
+            
             OnStartPointFound?.Invoke(GetWorldPosFromCoordinates(startPos));
             
             Debug.Log("Path Count " + m_LevelGenerator.m_PathCount);
@@ -200,7 +202,7 @@ namespace GridSystem
             }
         }
         
-        private void HandleOnPlayerEnterMoveState(Vector3 worldPos, Vector2Int dir)
+        private void HandleOnPlayerSwipeDirectionFound(Vector3 worldPos, Vector2Int dir)
         {
             List<Tile> path = FindPlayerPath(GetCoordinatesFromWorldPos(worldPos) , dir);
             OnFoundPlayerPath?.Invoke(path);
@@ -229,7 +231,7 @@ namespace GridSystem
 
         private void AddListeners()
         {
-            PlayerStateMachine.OnPlayerEnterMoveState += HandleOnPlayerEnterMoveState;
+            PlayerStateMachine.OnPlayerSwipeDirectionFound += HandleOnPlayerSwipeDirectionFound;
             Tile.OnTileColored += HandleOnTileColored;
             LevelGeneratorUI.OnGenerateLevel += HandleOnGenerateLevel;
             LevelManager.OnGenerateLevel += HandleOnGenerateLevel;
@@ -237,7 +239,7 @@ namespace GridSystem
 
         private void RemoveListeners()
         {
-            PlayerStateMachine.OnPlayerEnterMoveState -= HandleOnPlayerEnterMoveState;
+            PlayerStateMachine.OnPlayerSwipeDirectionFound -= HandleOnPlayerSwipeDirectionFound;
             Tile.OnTileColored -= HandleOnTileColored;
             LevelGeneratorUI.OnGenerateLevel -= HandleOnGenerateLevel;
             LevelManager.OnGenerateLevel -= HandleOnGenerateLevel;

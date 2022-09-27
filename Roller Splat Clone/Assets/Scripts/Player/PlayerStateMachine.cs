@@ -26,7 +26,7 @@ namespace Player
         private PlayerMoveState m_PlayerStopState;
         
         private Vector2Int m_SwipeDir;
-        private List<Tile> m_Path;
+        private List<Tile> m_Path = new List<Tile>();
         
         public Vector2Int SwipeDir
         {
@@ -47,7 +47,6 @@ namespace Player
         private void OnStateEnter() => m_CurrentBaseState?.OnEnter(this);
         private void OnStateExit() => m_CurrentBaseState?.OnExit(this);
         private bool StateChanged(PlayerStates newState) => newState != m_CurrentPlayerState;
-        public void InvokeOnPlayerEnterMoveState() => OnPlayerEnterMoveState?.Invoke(transform.position,SwipeDir);
         public float MaxDistance => playerSettings.MaxDistance;
         public float RotateAngle => playerSettings.RotateAngle;
         public float RaycastMultiplicator => playerSettings.RaycastMultiplicator;
@@ -56,7 +55,7 @@ namespace Player
         public bool IsPathEmpty => Path.Count == 0;
         public bool IsPathFinished(int currentPathIndex) => Path.Count > currentPathIndex;
         public bool HasPlayerPassedTile(Vector3 tilePos) => (tilePos - transform.position).sqrMagnitude < 0.1 * 0.1;
-        public static event Action<Vector3, Vector2Int> OnPlayerEnterMoveState;
+        public static event Action<Vector3, Vector2Int> OnPlayerSwipeDirectionFound;
 
         private Dictionary<PlayerStates, PlayerBaseStat> m_State = 
             new Dictionary<PlayerStates, PlayerBaseStat>()
@@ -109,32 +108,43 @@ namespace Player
         
         private void HandleOnPlayerPosFound(Vector3 position)
         {
+            Debug.Log(position);
             transform.position = position;
         }
 
         private void HandleOnPlayerSwipe(Vector2Int swipeDir)
         {
             SwipeDir = swipeDir;
-            SwitchState(PlayerStates.Move);
+            OnPlayerSwipeDirectionFound?.Invoke(transform.position, SwipeDir);
+
         }
 
         private void HandleOnFoundPlayerPath(List<Tile> path)
         {
             Path = path;
+            SwitchState(PlayerStates.Move);
         }
         
+        private void HandleOnLevelFinished()
+        {
+            SwitchState(PlayerStates.Idle);
+            Path.Clear();
+        }
+
         private void AddListeners()
         {
             PlayerInputSystem.OnPlayerSwipe += HandleOnPlayerSwipe;
             Grid.OnFoundPlayerPath += HandleOnFoundPlayerPath;
             Grid.OnStartPointFound += HandleOnPlayerPosFound;
+            Grid.OnLevelFinished += HandleOnLevelFinished;
         }
-
+        
         private void RemoveListeners()
         {
             PlayerInputSystem.OnPlayerSwipe -= HandleOnPlayerSwipe;
             Grid.OnFoundPlayerPath -= HandleOnFoundPlayerPath;
             Grid.OnStartPointFound -= HandleOnPlayerPosFound;
+            Grid.OnLevelFinished += HandleOnLevelFinished;
         }
     }
 }
