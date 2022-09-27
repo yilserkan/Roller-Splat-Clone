@@ -97,7 +97,7 @@ namespace GridSystem
         
         public void ResetTile()
         {
-            m_MeshRenderer.material.color = Color.red;
+            m_MeshRenderer.material.color = Color.white;
             Coordinates = new Vector2Int(-1,-1);
             WorldPosition = Vector3.zero;
             IsBlocked = false;
