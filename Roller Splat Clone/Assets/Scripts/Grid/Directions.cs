@@ -10,9 +10,9 @@ public enum Direction
     Left,
     Right
 }
-public class Directions
+public static class Directions
 {
-    public Direction GetRandomDirection(Direction currentDirection,ref bool isStartTileInitialized)
+    public static Direction GetRandomDirection(Direction currentDirection,ref bool isStartTileInitialized)
     {
         if (!isStartTileInitialized)
         {
@@ -31,7 +31,7 @@ public class Directions
         return GetRandomDirFromOtherAxis(Direction.Left);
     }
     
-    public Direction GetRandomDirFromOtherAxis(Direction dir)
+    public static Direction GetRandomDirFromOtherAxis(Direction dir)
     {
         Direction nb;
         if (dir == Direction.Up || dir == Direction.Down)
@@ -48,7 +48,7 @@ public class Directions
         return nb;
     }
     
-    public Direction FindOppositeDirection(Direction dir)
+    public static Direction FindOppositeDirection(Direction dir)
     {
         Direction nb = Direction.Down;
         switch (dir)

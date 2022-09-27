@@ -33,26 +33,20 @@ namespace GridSystem
         
         public static Dictionary<Direction, Vector2Int> m_Directions = new Dictionary<Direction, Vector2Int>()
         {
-            { Direction.Up, new Vector2Int(0, 1) },
-            { Direction.Down, new Vector2Int(0, -1) },
-            { Direction.Right, new Vector2Int(1, 0) },
-            { Direction.Left, new Vector2Int(-1, 0) }
+            { Direction.Up, Vector2Int.up },
+            { Direction.Down, Vector2Int.down },
+            { Direction.Right, Vector2Int.right },
+            { Direction.Left, Vector2Int.left }
         };
 
         private void OnEnable()
         {
-            PlayerStateMachine.OnPlayerEnterMoveState += HandleOnPlayerEnterMoveState;
-            Tile.OnTileColored += HandleOnTileColored;
-            LevelGeneratorUI.OnGenerateLevel += HandleOnGenerateLevel;
-            LevelManager.OnGenerateLevel += HandleOnGenerateLevel;
+            AddListeners();
         }
 
         private void OnDisable()
         {
-            PlayerStateMachine.OnPlayerEnterMoveState -= HandleOnPlayerEnterMoveState;
-            Tile.OnTileColored -= HandleOnTileColored;
-            LevelGeneratorUI.OnGenerateLevel -= HandleOnGenerateLevel;
-            LevelManager.OnGenerateLevel -= HandleOnGenerateLevel;
+           RemoveListeners();
         }
 
         private void HandleOnGenerateLevel(Level level)
@@ -61,26 +55,27 @@ namespace GridSystem
             height = level.Height;
             width = level.Width;
             cycles = level.Cycles;
+            
             Random.InitState(level.Seed);
+            
             CreateLevel();
         }
 
-        private void Start()
-        {
-            //CreateLevel();
-        }
-        
+    
         private void CreateLevel()
         {
-            Reset();
+            ResetGrid();
             CreateGrid();
+            
             m_LevelGenerator = new LevelGenerator(width, height,cycles, m_Grid,useBothAxisOnStartingPoint);
             Vector2Int startPos = m_LevelGenerator.GenerateRandomLevel();
+            
             OnStartPointFound?.Invoke(GetWorldPosFromCoordinates(startPos));
+            
             Debug.Log("Path Count " + m_LevelGenerator.m_PathCount);
         }
 
-        private void Reset()
+        private void ResetGrid()
         {
             if (m_Grid.Count > 0)
             {
@@ -130,16 +125,6 @@ namespace GridSystem
 
             return new Vector2Int(0, 0);
         }
-
-        public Tile GetTile(Vector2Int coordinates)
-        {
-            if (m_Grid.ContainsKey(coordinates))
-            {
-                return m_Grid[coordinates];
-            }
-
-            return null;
-        }   
         
         public void FindNeighbors()
         {
@@ -237,9 +222,25 @@ namespace GridSystem
         private void LevelFinished()
         {
             Debug.Log("On Next Level");
-            Reset();
+            ResetGrid();
             OnResetTiles?.Invoke();
             OnLevelFinished?.Invoke();
+        }
+
+        private void AddListeners()
+        {
+            PlayerStateMachine.OnPlayerEnterMoveState += HandleOnPlayerEnterMoveState;
+            Tile.OnTileColored += HandleOnTileColored;
+            LevelGeneratorUI.OnGenerateLevel += HandleOnGenerateLevel;
+            LevelManager.OnGenerateLevel += HandleOnGenerateLevel;
+        }
+
+        private void RemoveListeners()
+        {
+            PlayerStateMachine.OnPlayerEnterMoveState -= HandleOnPlayerEnterMoveState;
+            Tile.OnTileColored -= HandleOnTileColored;
+            LevelGeneratorUI.OnGenerateLevel -= HandleOnGenerateLevel;
+            LevelManager.OnGenerateLevel -= HandleOnGenerateLevel;
         }
     }
 }

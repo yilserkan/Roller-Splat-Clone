@@ -35,7 +35,7 @@ namespace GridSystem
         {
             RemoveListeners();
         }
-        
+
         public void Init(Vector2Int coordinates, Vector3 worldPos)
         {
             ResetTile();
@@ -54,14 +54,6 @@ namespace GridSystem
             WorldPosition = worldPos;
         }
 
-        public void SetControlIndex(int index)
-        {
-            if (IsControlIndex == -1)
-            {
-                IsControlIndex = index;
-            }
-        }
-
         public void ColorTile(Color color)
         {
             if (!IsColored && !IsBlocked)
@@ -72,14 +64,35 @@ namespace GridSystem
             }
         }
         
-        public void SetTileAsPath()
+        public void UnblockTile()
         {
-            if (!m_PathPosSet)
+            if (IsBlocked)
             {
                 m_MeshRenderer.material.color = Color.gray;
                 transform.position += Vector3.down;
-                m_PathPosSet = true;
+                IsBlocked = false;
             }
+        }
+        
+        public void SetControlBlock(int cycleIndex)
+        {
+            if (IsBlocked)
+            {
+                SetControlIndex(cycleIndex);
+                IsControlBlock = true;
+            }
+        }
+        private void SetControlIndex(int index)
+        {
+            if (IsControlIndex == -1)
+            {
+                IsControlIndex = index;
+            }
+        }
+
+        public bool ControlBlockSetOnPreviousCycle(int cycleIndex)
+        {
+            return IsControlIndex == cycleIndex;
         }
         
         public void ResetTile()
