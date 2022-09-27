@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using GridSystem;
 using UnityEngine;
 using Grid = GridSystem.Grid;
+using Random = UnityEngine.Random;
 
 namespace Player
 {
@@ -19,6 +20,8 @@ namespace Player
         [SerializeField] private PlayerStates initialState;
         [SerializeField] private PlayerInputSystem inputSystem;
         [SerializeField] private PlayerSettings playerSettings;
+        [SerializeField] private MeshRenderer meshRenderer;
+        [SerializeField] private Transform playerMeshTransform;
         
         private PlayerStates m_CurrentPlayerState = PlayerStates.None;
         private PlayerBaseStat m_CurrentBaseState;
@@ -27,6 +30,7 @@ namespace Player
         
         private Vector2Int m_SwipeDir;
         private List<Tile> m_Path = new List<Tile>();
+        private Color m_CurrentColor;
         
         public Vector2Int SwipeDir
         {
@@ -34,6 +38,11 @@ namespace Player
             private set => m_SwipeDir = value;
         }
 
+        public Vector3 SwipeDirVector3
+        {
+            get => new Vector3(m_SwipeDir.x, 0, m_SwipeDir.y);
+        }
+        
         public List<Tile> Path
         {
             get => m_Path;
@@ -52,10 +61,16 @@ namespace Player
         public float RaycastMultiplicator => playerSettings.RaycastMultiplicator;
         public float MoveSpeed =>  playerSettings.MoveSpeed;
         public float DeltaTime => Time.deltaTime;
+
+        public Transform PlayerMeshTransform => playerMeshTransform;
+        public Color CurrentColor => m_CurrentColor;
         public bool IsPathEmpty => Path.Count == 0;
-        public bool IsPathFinished(int currentPathIndex) => Path.Count > currentPathIndex;
+        public bool IsPathLeft(int currentPathIndex) => Path.Count > currentPathIndex;
         public bool HasPlayerPassedTile(Vector3 tilePos) => (tilePos - transform.position).sqrMagnitude < 0.1 * 0.1;
         public static event Action<Vector3, Vector2Int> OnPlayerSwipeDirectionFound;
+        public static event Action<Transform, Vector3> OnWallHit;
+
+        public void InvokeOnWallHit(Transform transform, Vector3 swipeDirection) => OnWallHit?.Invoke(transform, swipeDirection);
 
         private Dictionary<PlayerStates, PlayerBaseStat> m_State = 
             new Dictionary<PlayerStates, PlayerBaseStat>()
@@ -130,6 +145,13 @@ namespace Player
             SwitchState(PlayerStates.Idle);
             Path.Clear();
         }
+        
+        private void HandleOnColorSet(Color color)
+        {
+            m_CurrentColor = color;
+            meshRenderer.material.color = m_CurrentColor;
+        }
+
 
         private void AddListeners()
         {
@@ -137,14 +159,16 @@ namespace Player
             Grid.OnFoundPlayerPath += HandleOnFoundPlayerPath;
             Grid.OnStartPointFound += HandleOnPlayerPosFound;
             Grid.OnLevelFinished += HandleOnLevelFinished;
+            Grid.OnColorSet += HandleOnColorSet;
         }
-        
+
         private void RemoveListeners()
         {
             PlayerInputSystem.OnPlayerSwipe -= HandleOnPlayerSwipe;
             Grid.OnFoundPlayerPath -= HandleOnFoundPlayerPath;
             Grid.OnStartPointFound -= HandleOnPlayerPosFound;
             Grid.OnLevelFinished += HandleOnLevelFinished;
+            Grid.OnColorSet -= HandleOnColorSet;
         }
     }
 }

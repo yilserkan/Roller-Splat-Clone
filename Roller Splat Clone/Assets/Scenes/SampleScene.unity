@@ -365,6 +365,7 @@ GameObject:
   - component: {fileID: 330585545}
   - component: {fileID: 330585544}
   - component: {fileID: 330585547}
+  - component: {fileID: 330585548}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -430,14 +431,14 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 330585543}
-  m_LocalRotation: {x: 0.42161557, y: -0, z: -0, w: 0.90677476}
-  m_LocalPosition: {x: -0.23, y: 7.87, z: -5.96}
+  m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1201267319}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 49.873, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
 --- !u!114 &330585547
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -471,6 +472,19 @@ MonoBehaviour:
   m_RequiresDepthTexture: 0
   m_RequiresColorTexture: 0
   m_Version: 2
+--- !u!114 &330585548
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 330585543}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e0401a99db8fff34e947cc456670e5b6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  cameraLookAngle: 75.6
 --- !u!1 &410087039
 GameObject:
   m_ObjectHideFlags: 0
@@ -983,6 +997,7 @@ GameObject:
   - component: {fileID: 975984298}
   - component: {fileID: 975984300}
   - component: {fileID: 975984299}
+  - component: {fileID: 975984301}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -1034,6 +1049,45 @@ MonoBehaviour:
   initialState: 1
   inputSystem: {fileID: 975984299}
   playerSettings: {fileID: 11400000, guid: da6a130422081604aa5d8376846fbc1f, type: 2}
+  meshRenderer: {fileID: 552391493}
+  playerMeshTransform: {fileID: 552391491}
+--- !u!114 &975984301
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 975984297}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d7fc1ba9d849bdc4aa71a0bfda3ff2e6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  animationCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 2
+      outSlope: 2
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  lerpDuration: 0.2
 --- !u!1 &1088720762
 GameObject:
   m_ObjectHideFlags: 0

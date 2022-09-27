@@ -22,13 +22,12 @@ namespace Player
               stateMachine.SwitchState(PlayerStates.Idle);
               return;
             }
-            Debug.Log("========================================");
+            
             MovePlayer();
-            RotatePlayer();
+            //RotatePlayer();
             
             void MovePlayer()
             {
-                Debug.Log("1========================================");
                 Tile targetTile = stateMachine.Path[m_CurrentPathIndex];
                 
                 Vector3 targetTilePos = targetTile.WorldPosition;
@@ -38,15 +37,20 @@ namespace Player
                     stateMachine.DeltaTime * stateMachine.MoveSpeed);
           
                 if (stateMachine.HasPlayerPassedTile(targetTilePos))
-                {   Debug.Log("2========================================");
-                    targetTile.ColorTile(Color.green);
+                {  
+                    targetTile.ColorTile(stateMachine.CurrentColor);
                     
-                    if (stateMachine.IsPathFinished(m_CurrentPathIndex+1))
+                    if (stateMachine.IsPathLeft(m_CurrentPathIndex+1))
                     {
                         m_CurrentPathIndex++;
                     }
                     else
                     {
+                        stateMachine.InvokeOnWallHit(
+                            stateMachine.transform,
+                            stateMachine.SwipeDirVector3
+                            );
+                        
                         stateMachine.SwitchState(PlayerStates.Idle);
                     }
                 }
@@ -59,5 +63,7 @@ namespace Player
                 stateMachine.transform.Rotate(rotateAxis,stateMachine.RotateAngle,Space.World);
             }
         }
+        
+       
     }
 }
