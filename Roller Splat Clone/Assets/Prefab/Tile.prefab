@@ -13,12 +13,13 @@ GameObject:
   - component: {fileID: 4912336035151028884}
   - component: {fileID: 667535880731615001}
   - component: {fileID: -8440489952578974943}
+  - component: {fileID: -2623296736325748236}
   m_Layer: 0
   m_Name: Tile
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!4 &3979503748695386811
 Transform:
@@ -110,5 +111,60 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 39adbf42f1464228ae5d092267081587, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  wallMaterial: {fileID: 2100000, guid: 87b2051c7a882dc4083721dffa51b6b9, type: 2}
+  pathUncoloredMaterial: {fileID: 2100000, guid: 18d4c4461029a944a8f567545e2782ba,
+    type: 2}
+  pathColoredMaterial: {fileID: 2100000, guid: db515f5c944ebcc4a8a7da01798fe125, type: 2}
+  tileAnimation: {fileID: -2623296736325748236}
   Coordinates: {x: 0, y: 0}
+  WorldPosition: {x: 0, y: 0, z: 0}
   IsBlocked: 0
+  IsControlBlock: 0
+  IsColored: 0
+  IsControlIndex: 0
+--- !u!114 &-2623296736325748236
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2299933919288668269}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e9c6085cffbf884c98a027ac9ff4c6c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  wallHitCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: -0.40405753
+      outSlope: -0.40405753
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.49963412
+      value: 0.79811907
+      inSlope: -0.00029544532
+      outSlope: -0.00029544532
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0.40346664
+      outSlope: 0.40346664
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  lerpDuration: 0.2

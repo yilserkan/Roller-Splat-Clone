@@ -5,6 +5,7 @@ using Json;
 using LevelSystem;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using Random = UnityEngine.Random;
 
 public class LevelGeneratorUI : MonoBehaviour
@@ -39,6 +40,11 @@ public class LevelGeneratorUI : MonoBehaviour
     {
 
         JSONSaveSystem.SaveToJSON(m_Levels, true);
+    }
+
+    public void _ReturnToMainMenu()
+    {
+        SceneManager.LoadScene(0);
     }
 
     private void ReadInputFields()

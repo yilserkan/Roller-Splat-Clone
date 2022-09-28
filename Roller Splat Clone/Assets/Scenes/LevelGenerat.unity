@@ -968,14 +968,14 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 330585543}
-  m_LocalRotation: {x: 0.42161557, y: -0, z: -0, w: 0.90677476}
-  m_LocalPosition: {x: -0.23, y: 7.87, z: -5.96}
+  m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
+  m_LocalPosition: {x: 6.4, y: 53.8, z: -5.96}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1201267319}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 49.873, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
 --- !u!114 &330585547
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1039,7 +1039,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f231c4fb786f3946a6b90b886c48677, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_SendPointerHoverToParent: 1
   m_HorizontalAxis: Horizontal
   m_VerticalAxis: Vertical
   m_SubmitButton: Submit
@@ -1648,6 +1647,7 @@ MonoBehaviour:
   gridStartPosition: {x: 0, y: 0, z: 0}
   prefab: {fileID: 2299933919288668269, guid: a1ba527525ed4a9498cb3c80cdac42a3, type: 3}
   useBothAxisOnStartingPoint: 1
+  parent: {fileID: 0}
 --- !u!1 &792747945
 GameObject:
   m_ObjectHideFlags: 0
@@ -3272,7 +3272,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1653184493}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 621439732}
+        m_TargetAssemblyTypeName: LevelGeneratorUI, Assembly-CSharp
+        m_MethodName: _ReturnToMainMenu
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1653184493
 MonoBehaviour:
   m_ObjectHideFlags: 0

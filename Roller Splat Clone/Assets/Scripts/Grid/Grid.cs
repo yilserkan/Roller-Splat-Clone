@@ -21,6 +21,7 @@ namespace GridSystem
         [SerializeField] private Vector3 gridStartPosition;
         [SerializeField] private GameObject prefab;
         [SerializeField] private bool useBothAxisOnStartingPoint;
+        [SerializeField] private GameObject parent;
 
         public static event Action<List<Tile>> OnFoundPlayerPath;
         public static event Action OnLevelFinished; 
@@ -74,10 +75,7 @@ namespace GridSystem
             m_LevelGenerator = new LevelGenerator(width, height,cycles, m_Grid,useBothAxisOnStartingPoint);
             Vector2Int startPos = m_LevelGenerator.GenerateRandomLevel();
             
-            Debug.Log("Start Tile Coords " + m_LevelGenerator.m_PathCount + " Pos " +GetWorldPosFromCoordinates(startPos));
-            
             OnStartPointFound?.Invoke(GetWorldPosFromCoordinates(startPos));
-            Debug.Log("Path Count " + m_LevelGenerator.m_PathCount);
         }
 
         private void ResetGrid()
@@ -103,9 +101,9 @@ namespace GridSystem
                     m_Grid.Add(coordinates,tile);
                 }
             }
+            
             FindNeighbors();
             ResetAllTiles();
-           
         }
         
         public Vector3 GetWorldPosFromCoordinates(Vector2Int coordinates)
@@ -142,8 +140,6 @@ namespace GridSystem
                     AddNeighbors(coordinates);
                 }
             }
-
-            //PrintNeighbors();
         }
 
         private void AddNeighbors(Vector2Int coordinates)
@@ -157,24 +153,7 @@ namespace GridSystem
                 }
             }
         }
-
-        private void PrintNeighbors()
-        {
-            foreach (var tile in m_Grid)
-            {
-                Debug.Log($"Tile : {tile.Value.Coordinates}");
-                foreach (var neigbor in tile.Value.Neigbors)
-                {
-                    if (neigbor.Value != null)
-                    {
-                        Debug.Log ($"Neighbor : {neigbor.Value.Coordinates}");
-                    }
-                   
-                }
-                
-                Debug.Log("----------------");
-            }
-        }
+        
 
         public List<Tile> FindPlayerPath(Vector2Int startCoordinate, Vector2Int moveDir)
         {
@@ -186,12 +165,10 @@ namespace GridSystem
             
             while (m_Grid[currentCoordinate].Neigbors[dir] != null && !m_Grid[currentCoordinate].Neigbors[dir].IsBlocked)
             {
-                Debug.Log($"Way : {currentCoordinate}");
                 currentCoordinate = m_Grid[currentCoordinate].Neigbors[dir].Coordinates;
                 path.Add(m_Grid[currentCoordinate]);
             }
-            Debug.Log($"Way : {currentCoordinate}");
-            Debug.Log($"--------------");
+            
             return path;
         }
 
@@ -220,13 +197,10 @@ namespace GridSystem
                 LevelFinished();
                 return;
             }
-            
-            Debug.Log("Tile Colored Count " + m_ColoredTilesCount);
         }
 
         private void LevelFinished()
         {
-            Debug.Log("On Next Level");
             ResetGrid();
             OnResetTiles?.Invoke();
             OnLevelFinished?.Invoke();

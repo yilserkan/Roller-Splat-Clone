@@ -146,7 +146,7 @@ namespace Player
         private void HandleOnLevelFinished()
         {
             Debug.Log("------------------------- Player state finished");
-            SwitchState(PlayerStates.Finish);
+            SwitchState(PlayerStates.Idle);
             Path.Clear();
         }
         

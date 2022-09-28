@@ -26,6 +26,11 @@ namespace CameraSystem
             RemoveListeners();
         }
 
+        private void Start()
+        {
+            Application.targetFrameRate = 60;
+        }
+
         private void SetCameraPosition()
         {
             float xPosition = (float)m_Width / 2;
@@ -72,7 +77,7 @@ namespace CameraSystem
 
         private void RemoveListeners()
         {
-            LevelManager.OnGenerateLevel += HandleOnGenerateLevel;
+            LevelManager.OnGenerateLevel -= HandleOnGenerateLevel;
         }
 
         
