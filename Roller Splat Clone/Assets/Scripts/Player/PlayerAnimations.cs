@@ -10,32 +10,25 @@ public class PlayerAnimations : MonoBehaviour
     [SerializeField] private AnimationCurve wallHitCurve;
     [SerializeField] private AnimationCurve jumpCurve;
     [SerializeField] private float lerpDuration = 1f;
+    [SerializeField] private float jumpLerpDuration = 1f;
     
     private Vector3 m_ScaleVector = Vector3.zero;
     private Vector3 m_SwipeDir;
     private float m_ValueToLerp;
     private float m_JumpStartValue;
+
+    private bool m_PlayingJumpAnimation = false;
     
     private Coroutine m_Lerp;
     private delegate void DelegateFunction();
     private DelegateFunction m_MethodToCall;
     
-    private void OnEnable()
-    {
-        AddListeners();
-    }
-    
-    private void OnDisable()
-    {
-        RemoveListeners();
-    }
-    
-    IEnumerator LerpDelegatMethod(DelegateFunction delFunction, AnimationCurve curve)
+    IEnumerator LerpDelegatMethod(DelegateFunction delFunction, AnimationCurve curve, float lerpDur)
     {
         float timeElapsed = 0;
-        while (timeElapsed < lerpDuration)
+        while (timeElapsed < lerpDur)
         {
-            m_ValueToLerp =  curve.Evaluate(timeElapsed/lerpDuration);
+            m_ValueToLerp =  curve.Evaluate(timeElapsed/lerpDur);
             delFunction();
             timeElapsed += Time.deltaTime;
             yield return null;
@@ -73,8 +66,13 @@ public class PlayerAnimations : MonoBehaviour
         transform.position = newPos;
     }
     
-    private void HandleOnWallHit(Vector3 swipeDirection)
+    public void PlayWallHitAnimation(Vector3 swipeDirection)
     {
+        if (m_PlayingJumpAnimation)
+        {
+            return;
+        }
+        
         if (m_Lerp != null)
         {
             StopCoroutine(m_Lerp);
@@ -83,30 +81,19 @@ public class PlayerAnimations : MonoBehaviour
         m_SwipeDir = swipeDirection;
         
         m_MethodToCall = ScaleAround;
-        m_Lerp = StartCoroutine(LerpDelegatMethod(m_MethodToCall, wallHitCurve));
+        m_Lerp = StartCoroutine(LerpDelegatMethod(m_MethodToCall, wallHitCurve, lerpDuration));
     } 
-    private void HandleOnLevelFinished()
+    public void PlayLevelFinishedAnimation()
     {
         if (m_Lerp != null)
         {
             StopCoroutine(m_Lerp);
         }
-  
+
+        m_PlayingJumpAnimation = true;
         m_JumpStartValue = transform.position.y;
         
         m_MethodToCall = Jump;
-        m_Lerp = StartCoroutine(LerpDelegatMethod(m_MethodToCall,jumpCurve));
-    }
-
-    private void AddListeners()
-    {
-        PlayerStateMachine.OnWallHit += HandleOnWallHit;
-        Grid.OnLevelFinished += HandleOnLevelFinished;
-    }
-
-    private void RemoveListeners()
-    {
-        PlayerStateMachine.OnWallHit -= HandleOnWallHit;
-        Grid.OnLevelFinished -= HandleOnLevelFinished;
+        m_Lerp = StartCoroutine(LerpDelegatMethod(m_MethodToCall,jumpCurve, jumpLerpDuration));
     }
 }

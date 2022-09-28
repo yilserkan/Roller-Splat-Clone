@@ -202,7 +202,7 @@ namespace GridSystem
         private void LevelFinished()
         {
             ResetGrid();
-            OnResetTiles?.Invoke();
+            // OnResetTiles?.Invoke();
             OnLevelFinished?.Invoke();
         }
 

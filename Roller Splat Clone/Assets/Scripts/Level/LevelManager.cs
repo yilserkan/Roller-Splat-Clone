@@ -46,7 +46,7 @@ namespace LevelSystem
         private void HandleOnLevelFinished()
         {
             m_LevelIndex++;
-            GenerateNewLevel();
+            //GenerateNewLevel();
         }
         private void AddListeners()
         {

@@ -47,7 +47,8 @@ namespace Player
                     }
                     else
                     {
-                        stateMachine.InvokeOnWallHit(stateMachine.SwipeDirVector3);
+                        // stateMachine.InvokeOnWallHit(stateMachine.SwipeDirVector3);
+                        stateMachine.PlayWallHitAnimation();
                         
                         CallTileHitAnim(targetTile, stateMachine.SwipeDir);
                         

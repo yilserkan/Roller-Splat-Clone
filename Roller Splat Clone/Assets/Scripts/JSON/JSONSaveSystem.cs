@@ -32,7 +32,7 @@ namespace Json
 
         private static string GetPath()
         {
-            return Application.dataPath + "/JSON Files/" + filename;
+            return Application.streamingAssetsPath + "/" + filename;
         }
 
         private static void WriteFile(string path, string content)

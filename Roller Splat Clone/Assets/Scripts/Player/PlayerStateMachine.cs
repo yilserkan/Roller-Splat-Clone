@@ -21,6 +21,7 @@ namespace Player
     {
         [SerializeField] private PlayerStates initialState;
         [SerializeField] private PlayerInputSystem inputSystem;
+        [SerializeField] private PlayerAnimations playerAnimations;
         [SerializeField] private PlayerSettings playerSettings;
         [SerializeField] private MeshRenderer meshRenderer;
         [SerializeField] private Transform playerMeshTransform;
@@ -56,6 +57,9 @@ namespace Player
 
         public void EnablePlayerInputs() => inputSystem.EnablePlayerInputs();
         public void DisablePlayerInputs() => inputSystem.DisablePlayerInputs();
+
+        public void PlayWallHitAnimation() => playerAnimations.PlayWallHitAnimation(SwipeDirVector3);
+        public void PlayLevelFinishedAnimation() => playerAnimations.PlayLevelFinishedAnimation();
         private void OnStateEnter() => m_CurrentBaseState?.OnEnter(this);
         private void OnStateExit() => m_CurrentBaseState?.OnExit(this);
         private bool StateChanged(PlayerStates newState) => newState != m_CurrentPlayerState;
@@ -74,9 +78,9 @@ namespace Player
         public bool IsPathLeft(int currentPathIndex) => Path.Count > currentPathIndex;
         public bool HasPlayerPassedTile(Vector3 tilePos) => (tilePos - transform.position).sqrMagnitude < 0.1 * 0.1;
         public static event Action<Vector3, Vector2Int> OnPlayerSwipeDirectionFound;
-        public static event Action<Vector3> OnWallHit;
+        // public static event Action<Vector3> OnWallHit;
 
-        public void InvokeOnWallHit(Vector3 swipeDirection) => OnWallHit?.Invoke(swipeDirection);
+        // public void InvokeOnWallHit(Vector3 swipeDirection) => OnWallHit?.Invoke(swipeDirection);
 
         private Dictionary<PlayerStates, PlayerBaseStat> m_State = 
             new Dictionary<PlayerStates, PlayerBaseStat>()
@@ -150,7 +154,9 @@ namespace Player
         private void HandleOnLevelFinished()
         {
             Debug.Log("------------------------- Player state finished");
-            SwitchState(PlayerStates.Idle);
+            LevelFinishedColorParticleSpawner.Instance.OnObjectPool(transform.position);
+            PlayLevelFinishedAnimation();
+            SwitchState(PlayerStates.Finish);
             Path.Clear();
         }
         
