@@ -46,10 +46,7 @@ namespace Player
                     }
                     else
                     {
-                        stateMachine.InvokeOnWallHit(
-                            stateMachine.transform,
-                            stateMachine.SwipeDirVector3
-                            );
+                        stateMachine.InvokeOnWallHit(stateMachine.SwipeDirVector3);
                         
                         stateMachine.SwitchState(PlayerStates.Idle);
                     }

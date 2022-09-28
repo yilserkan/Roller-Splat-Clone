@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using GridSystem;
+using LevelSystem;
 using UnityEngine;
 using Grid = GridSystem.Grid;
 using Random = UnityEngine.Random;
@@ -12,7 +13,8 @@ namespace Player
     {
         None,
         Idle,
-        Move
+        Move,
+        Finish
     }
     
     public class PlayerStateMachine : MonoBehaviour
@@ -68,15 +70,16 @@ namespace Player
         public bool IsPathLeft(int currentPathIndex) => Path.Count > currentPathIndex;
         public bool HasPlayerPassedTile(Vector3 tilePos) => (tilePos - transform.position).sqrMagnitude < 0.1 * 0.1;
         public static event Action<Vector3, Vector2Int> OnPlayerSwipeDirectionFound;
-        public static event Action<Transform, Vector3> OnWallHit;
+        public static event Action<Vector3> OnWallHit;
 
-        public void InvokeOnWallHit(Transform transform, Vector3 swipeDirection) => OnWallHit?.Invoke(transform, swipeDirection);
+        public void InvokeOnWallHit(Vector3 swipeDirection) => OnWallHit?.Invoke(swipeDirection);
 
         private Dictionary<PlayerStates, PlayerBaseStat> m_State = 
             new Dictionary<PlayerStates, PlayerBaseStat>()
         {
             { PlayerStates.Idle, new PlayerIdleState() },
-            { PlayerStates.Move, new PlayerMoveState() }
+            { PlayerStates.Move, new PlayerMoveState() },
+            { PlayerStates.Finish, new PlayerFinishState() }
         };
 
         private void OnEnable()
@@ -105,7 +108,7 @@ namespace Player
         
         public void SwitchState(PlayerStates newState)
         {
-            if (!StateChanged(newState))
+            if (!StateChanged(newState) || m_CurrentPlayerState == PlayerStates.Finish)
             {
                 return;
             }
@@ -142,16 +145,17 @@ namespace Player
         
         private void HandleOnLevelFinished()
         {
-            SwitchState(PlayerStates.Idle);
+            Debug.Log("------------------------- Player state finished");
+            SwitchState(PlayerStates.Finish);
             Path.Clear();
         }
         
         private void HandleOnColorSet(Color color)
         {
             m_CurrentColor = color;
-            meshRenderer.material.color = m_CurrentColor;
+            //meshRenderer.material.color = m_CurrentColor;
+            meshRenderer.sharedMaterial.color = m_CurrentColor;
         }
-
 
         private void AddListeners()
         {
@@ -161,7 +165,7 @@ namespace Player
             Grid.OnLevelFinished += HandleOnLevelFinished;
             Grid.OnColorSet += HandleOnColorSet;
         }
-
+        
         private void RemoveListeners()
         {
             PlayerInputSystem.OnPlayerSwipe -= HandleOnPlayerSwipe;

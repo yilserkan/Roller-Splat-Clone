@@ -1,0 +1,14 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+namespace Player
+{
+    public class PlayerFinishState : PlayerBaseStat
+    {
+        public override void OnEnter(PlayerStateMachine stateMachine)
+        { 
+            stateMachine.DisablePlayerInputs();
+        }
+    }
+}

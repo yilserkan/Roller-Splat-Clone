@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: Player Settings
   m_EditorClassIdentifier: 
   RaycastMultiplicator: 0.5
-  MoveSpeed: 10
+  MoveSpeed: 20
   RotateAngle: 5
   MaxDistance: 0.5
