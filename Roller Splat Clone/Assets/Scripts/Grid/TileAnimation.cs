@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -10,11 +11,21 @@ namespace GridSystem
         [SerializeField] private float lerpDuration = 1f;
 
         private Vector3 m_ScaleVector;
+        private bool m_LocalTransformChanged = false;
         private Vector3 m_StartLocalPos;
         private Vector3 m_StartLocalScale;
 
         private Coroutine m_Lerp;
-        
+
+        private void OnDisable()
+        {
+            if (m_LocalTransformChanged)
+            {
+                ResetLocalPositionAndScale();
+                m_LocalTransformChanged = false;
+            }
+        }
+
         public void PlayHitAnim(Direction dir)
         {
             if (m_Lerp != null)
@@ -72,6 +83,8 @@ namespace GridSystem
 
         private void SetLocalPositionAndScale()
         {
+            m_LocalTransformChanged = true;
+            
             m_StartLocalPos = transform.localPosition;
             m_StartLocalScale = transform.localScale;
         }

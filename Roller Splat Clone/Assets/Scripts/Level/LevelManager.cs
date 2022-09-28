@@ -1,8 +1,10 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Effects;
 using Json;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using Grid = GridSystem.Grid;
 
 namespace LevelSystem
@@ -13,7 +15,7 @@ namespace LevelSystem
         
         private List<Level> m_Levels;
         public static event Action<Level> OnGenerateLevel;
-
+        public static event Action OnResetTiles;
         private bool HasUnplayedLevels => m_LevelIndex < m_Levels.Count;
         private void ReadLevelsFromJson() => m_Levels = JSONSaveSystem.ReadFromJson<Level>();
         
@@ -42,20 +44,29 @@ namespace LevelSystem
                 return;
             }
             // Go To Main Menu
+            SceneManager.LoadScene(0);
         }
-        private void HandleOnLevelFinished()
+        // private void HandleOnLevelFinished()
+        // {
+        //     m_LevelIndex++;
+        //     //GenerateNewLevel();
+        // }
+        private void HandleOnLoadNextLevel()
         {
+            OnResetTiles?.Invoke();
             m_LevelIndex++;
-            //GenerateNewLevel();
+            GenerateNewLevel();
         }
         private void AddListeners()
         {
-            Grid.OnLevelFinished += HandleOnLevelFinished;
+            // Grid.OnLevelFinished += HandleOnLevelFinished;
+            LevelFinishEffects.OnLoadNextLevel += HandleOnLoadNextLevel;
         }
 
         private void RemoveListeners()
         {
-            Grid.OnLevelFinished -= HandleOnLevelFinished;
+            // Grid.OnLevelFinished -= HandleOnLevelFinished;
+            LevelFinishEffects.OnLoadNextLevel -= HandleOnLoadNextLevel;
         }
     }
 }

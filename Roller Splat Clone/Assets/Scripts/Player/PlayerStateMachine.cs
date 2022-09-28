@@ -125,6 +125,13 @@ namespace Player
             ChangeState(newState);
             OnStateEnter();
         }
+        
+        public void ForceSwitchState(PlayerStates newState)
+        {
+            OnStateExit();
+            ChangeState(newState);
+            OnStateEnter();
+        }
 
         private void ChangeState(PlayerStates newState)
         {
@@ -166,10 +173,16 @@ namespace Player
             //meshRenderer.material.color = m_CurrentColor;
             meshRenderer.sharedMaterial.color = m_CurrentColor;
         }
+        
+        private void HandleOnGenerateLevel(Level obj)
+        {
+            ForceSwitchState(PlayerStates.Idle);
+        }
 
         private void AddListeners()
         {
             PlayerInputSystem.OnPlayerSwipe += HandleOnPlayerSwipe;
+            LevelManager.OnGenerateLevel += HandleOnGenerateLevel;
             Grid.OnFoundPlayerPath += HandleOnFoundPlayerPath;
             Grid.OnStartPointFound += HandleOnPlayerPosFound;
             Grid.OnLevelFinished += HandleOnLevelFinished;
@@ -179,6 +192,7 @@ namespace Player
         private void RemoveListeners()
         {
             PlayerInputSystem.OnPlayerSwipe -= HandleOnPlayerSwipe;
+            LevelManager.OnGenerateLevel -= HandleOnGenerateLevel;
             Grid.OnFoundPlayerPath -= HandleOnFoundPlayerPath;
             Grid.OnStartPointFound -= HandleOnPlayerPosFound;
             Grid.OnLevelFinished += HandleOnLevelFinished;

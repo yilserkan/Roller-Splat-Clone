@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using Effects;
+using LevelSystem;
 using ObjectPool;
 using UnityEngine;
 
@@ -142,12 +144,14 @@ namespace GridSystem
         {
             Grid.OnResetTiles += HandleOnResetTiles;
             LevelGeneratorUI.OnResetTiles += HandleOnResetTiles;
+            LevelFinishEffects.OnResetTiles += HandleOnResetTiles;
         }
         
         private void RemoveListeners()
         {
             Grid.OnResetTiles -= HandleOnResetTiles;
             LevelGeneratorUI.OnResetTiles -= HandleOnResetTiles;
+            LevelFinishEffects.OnResetTiles -= HandleOnResetTiles;
         }
     }
 }
