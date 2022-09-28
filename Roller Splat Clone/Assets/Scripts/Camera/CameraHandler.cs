@@ -11,9 +11,7 @@ namespace CameraSystem
     public class CameraHandler : MonoBehaviour
     {
         [SerializeField] private Transform cameraParent;
-        [SerializeField] private float shakeMagnitude;
-        [SerializeField] private float shakeDuration;
-        
+
         [Range(60, 90)] 
         [SerializeField] private float cameraLookAngle;
 
@@ -68,29 +66,7 @@ namespace CameraSystem
             zPosition -= zSubstractValue;
         }
 
-        IEnumerator ShakeCamera()
-        {
-            Vector3 startLocalPos = transform.localPosition;
-            
-            float elapsedTime = 0;
-
-            while (elapsedTime < shakeDuration)
-            {
-                float randomX = Random.Range(-1, 1) * shakeMagnitude;
-                float randomY = Random.Range(-1, 1) * shakeMagnitude;
-
-                Vector3 newLocalPos = new Vector3(randomX, randomY, startLocalPos.z);
-
-                transform.localPosition = newLocalPos;
-                
-                elapsedTime += Time.deltaTime;
-                yield return null;
-            }
-
-            transform.localPosition = startLocalPos;
-
-        }
-        
+  
         
         private void HandleOnGenerateLevel(Level level)
         {
@@ -100,23 +76,16 @@ namespace CameraSystem
             SetCameraPosition();
         }
 
-        private void HandleOnLevelFinished()
-        {
-            StartCoroutine(ShakeCamera());
-        }
+    
         
         private void AddListeners()
         {
             LevelManager.OnGenerateLevel += HandleOnGenerateLevel;
-            Grid.OnLevelFinished += HandleOnLevelFinished;
         }
         
         private void RemoveListeners()
         {
             LevelManager.OnGenerateLevel -= HandleOnGenerateLevel;
-            Grid.OnLevelFinished -= HandleOnLevelFinished;
         }
-
-        
     }
 }
