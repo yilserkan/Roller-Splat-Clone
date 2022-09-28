@@ -3,15 +3,22 @@ using System.Collections;
 using System.Collections.Generic;
 using Player;
 using UnityEngine;
+using Grid = GridSystem.Grid;
 
 public class PlayerAnimations : MonoBehaviour
 {
-    [SerializeField] private AnimationCurve animationCurve;
+    [SerializeField] private AnimationCurve wallHitCurve;
+    [SerializeField] private AnimationCurve jumpCurve;
     [SerializeField] private float lerpDuration = 1f;
-    
-    private Vector3 scaleVector = Vector3.zero;
 
+    private Vector3 m_ScaleVector = Vector3.zero;
+    private Vector3 m_SwipeDir;
+    private float m_ValueToLerp;
+    private float m_JumpStartValue;
+    
     private Coroutine m_Lerp;
+    private delegate void DelegateFunction();
+    private DelegateFunction m_MethodToCall;
     
     private void OnEnable()
     {
@@ -23,76 +30,83 @@ public class PlayerAnimations : MonoBehaviour
         RemoveListeners();
     }
     
-
-    private void ScaleAroundRelative(Transform player, Vector3 pivot, Vector3 newScale)
-    {
-        Vector3 pivotDelta = player.localPosition - pivot;
-        pivotDelta.Scale(newScale);
-        player.transform.localPosition = pivot + pivotDelta;
-
-        var finalScale = player.transform.localScale;
-        finalScale.Scale(newScale);
-        player.localScale = finalScale;
-            
-    }
-    private void ScaleAround(Transform player, Vector3 swipeDirection, float newScale)
-    {
-        if (swipeDirection == Vector3.forward || swipeDirection == Vector3.back)
-        {
-            scaleVector = new Vector3(1, 1, newScale);
-        }
-        else
-        {
-            scaleVector = new Vector3(newScale, 1, 1);
-        }
-
-        Vector3 pivot = player.localPosition + swipeDirection;
-        Vector3 pivotDelta = player.localPosition - pivot;
-        Vector3 scaleFactor = new Vector3(
-            scaleVector.x / player.localScale.x,
-            scaleVector.y / player.localScale.y,
-            scaleVector.z / player.localScale.z
-        );
-        pivotDelta.Scale(scaleFactor);
-        player.transform.localPosition = pivot + pivotDelta;
-            
-        player.localScale = scaleVector;
-            
-    }
-
-    IEnumerator Lerp(Transform player, Vector3 swipeDir)
+    IEnumerator LerpDelegatMethod(DelegateFunction delFunction, AnimationCurve curve)
     {
         float timeElapsed = 0;
-        float valueToLerp = 0.5f;
         while (timeElapsed < lerpDuration)
         {
-           
-            valueToLerp = Mathf.Lerp(.5f, 1,   animationCurve.Evaluate(timeElapsed/lerpDuration));
-            ScaleAround(player,swipeDir,valueToLerp);
+            m_ValueToLerp =  curve.Evaluate(timeElapsed/lerpDuration);
+            delFunction();
             timeElapsed += Time.deltaTime;
             yield return null;
         }
-
-        valueToLerp = 1;
-        ScaleAround(player,swipeDir,valueToLerp);
     }
     
-    private void HandleOnWallHit(Transform transform, Vector3 swipeDirection)
+    private void ScaleAround()
+    {
+        if (m_SwipeDir == Vector3.forward || m_SwipeDir == Vector3.back)
+        {
+            m_ScaleVector = new Vector3(1, 1, m_ValueToLerp);
+        }
+        else
+        {
+            m_ScaleVector = new Vector3(m_ValueToLerp, 1, 1);
+        }
+
+        Vector3 pivot = transform.localPosition + (m_SwipeDir/2);
+        Vector3 pivotDelta = transform.localPosition - pivot;
+        Vector3 scaleFactor = new Vector3(
+            m_ScaleVector.x / transform.localScale.x,
+            m_ScaleVector.y / transform.localScale.y,
+            m_ScaleVector.z / transform.localScale.z
+        );
+        pivotDelta.Scale(scaleFactor);
+        transform.transform.localPosition = pivot + pivotDelta;
+            
+        transform.localScale = m_ScaleVector;
+            
+    }
+
+    private void Jump()
+    {
+        Vector3 newPos = new Vector3(transform.position.x, m_JumpStartValue + m_ValueToLerp, transform.position.z);
+        transform.position = newPos;
+    }
+    
+    private void HandleOnWallHit(Vector3 swipeDirection)
     {
         if (m_Lerp != null)
         {
             StopCoroutine(m_Lerp);
         }
-        m_Lerp = StartCoroutine(Lerp(transform, swipeDirection));
+
+        m_SwipeDir = swipeDirection;
+        
+        m_MethodToCall = ScaleAround;
+        m_Lerp = StartCoroutine(LerpDelegatMethod(m_MethodToCall, wallHitCurve));
+    } 
+    private void HandleOnLevelFinished()
+    {
+        if (m_Lerp != null)
+        {
+            StopCoroutine(m_Lerp);
+        }
+  
+        m_JumpStartValue = transform.position.y;
+        
+        m_MethodToCall = Jump;
+        m_Lerp = StartCoroutine(LerpDelegatMethod(m_MethodToCall,jumpCurve));
     }
 
     private void AddListeners()
     {
         PlayerStateMachine.OnWallHit += HandleOnWallHit;
+        Grid.OnLevelFinished += HandleOnLevelFinished;
     }
-    
+
     private void RemoveListeners()
     {
         PlayerStateMachine.OnWallHit -= HandleOnWallHit;
+        Grid.OnLevelFinished -= HandleOnLevelFinished;
     }
 }

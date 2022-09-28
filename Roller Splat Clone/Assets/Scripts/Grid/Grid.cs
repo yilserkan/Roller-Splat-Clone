@@ -24,9 +24,8 @@ namespace GridSystem
 
         public static event Action<List<Tile>> OnFoundPlayerPath;
         public static event Action OnLevelFinished; 
-        public static event Action OnResetTiles; 
+        public static event Action OnResetTiles;
         public static event Action<Vector3> OnStartPointFound;
-
         public static event Action<Color> OnColorSet;
         private Dictionary<Vector2Int, Tile> m_Grid = new Dictionary<Vector2Int, Tile>();
 
@@ -78,7 +77,6 @@ namespace GridSystem
             Debug.Log("Start Tile Coords " + m_LevelGenerator.m_PathCount + " Pos " +GetWorldPosFromCoordinates(startPos));
             
             OnStartPointFound?.Invoke(GetWorldPosFromCoordinates(startPos));
-            
             Debug.Log("Path Count " + m_LevelGenerator.m_PathCount);
         }
 
