@@ -3,12 +3,18 @@ using System.Collections;
 using System.Collections.Generic;
 using LevelSystem;
 using UnityEngine;
+using Grid = GridSystem.Grid;
+using Random = UnityEngine.Random;
 
 namespace CameraSystem
 {
     public class CameraHandler : MonoBehaviour
     {
-        [Range(60,90)]
+        [SerializeField] private Transform cameraParent;
+        [SerializeField] private float shakeMagnitude;
+        [SerializeField] private float shakeDuration;
+        
+        [Range(60, 90)] 
         [SerializeField] private float cameraLookAngle;
 
         private float m_DefaultAngle = 90f;
@@ -29,6 +35,7 @@ namespace CameraSystem
         private void Start()
         {
             Application.targetFrameRate = 60;
+            Camera.main.aspect = 9f/16f;
         }
 
         private void SetCameraPosition()
@@ -46,7 +53,7 @@ namespace CameraSystem
             Vector3 newPos = new Vector3(xPosition, yPosition, zPosition);
             Quaternion newRot = Quaternion.Euler(cameraLookAngle, 0,0);
             
-            transform.SetPositionAndRotation(newPos,newRot);
+            cameraParent.SetPositionAndRotation(newPos,newRot);
             
         }
 
@@ -60,6 +67,29 @@ namespace CameraSystem
             
             zPosition -= zSubstractValue;
         }
+
+        IEnumerator ShakeCamera()
+        {
+            Vector3 startLocalPos = transform.localPosition;
+            
+            float elapsedTime = 0;
+
+            while (elapsedTime < shakeDuration)
+            {
+                float randomX = Random.Range(-1, 1) * shakeMagnitude;
+                float randomY = Random.Range(-1, 1) * shakeMagnitude;
+
+                Vector3 newLocalPos = new Vector3(randomX, randomY, startLocalPos.z);
+
+                transform.localPosition = newLocalPos;
+                
+                elapsedTime += Time.deltaTime;
+                yield return null;
+            }
+
+            transform.localPosition = startLocalPos;
+
+        }
         
         
         private void HandleOnGenerateLevel(Level level)
@@ -69,15 +99,22 @@ namespace CameraSystem
 
             SetCameraPosition();
         }
+
+        private void HandleOnLevelFinished()
+        {
+            StartCoroutine(ShakeCamera());
+        }
         
         private void AddListeners()
         {
             LevelManager.OnGenerateLevel += HandleOnGenerateLevel;
+            Grid.OnLevelFinished += HandleOnLevelFinished;
         }
-
+        
         private void RemoveListeners()
         {
             LevelManager.OnGenerateLevel -= HandleOnGenerateLevel;
+            Grid.OnLevelFinished -= HandleOnLevelFinished;
         }
 
         
