@@ -8,6 +8,10 @@ namespace GridSystem
     public class Tile : AbstractObjectPoolObject<Tile>
 
     {
+        [SerializeField] private Material wallMaterial;
+        [SerializeField] private Material pathUncoloredMaterial;
+        [SerializeField] private Material pathColoredMaterial;
+        
         public Vector2Int Coordinates;
         public Vector3 WorldPosition;
         public bool IsBlocked;
@@ -56,9 +60,15 @@ namespace GridSystem
 
         public void ColorTile(Color color)
         {
+            if (pathColoredMaterial.color != color)
+            {
+                pathColoredMaterial.color = color;
+            }
+            
             if (!IsColored && !IsBlocked)
             {
-                m_MeshRenderer.material.color = color;
+                // m_MeshRenderer.material.color = color;
+                m_MeshRenderer.sharedMaterial = pathColoredMaterial;
                 IsColored = true;
                 OnTileColored?.Invoke();
             }
@@ -68,7 +78,8 @@ namespace GridSystem
         {
             if (IsBlocked)
             {
-                m_MeshRenderer.material.color = Color.gray;
+                // m_MeshRenderer.material.color = Color.gray;
+                m_MeshRenderer.sharedMaterial = pathUncoloredMaterial;
                 transform.position += Vector3.down;
                 IsBlocked = false;
             }
@@ -97,7 +108,8 @@ namespace GridSystem
         
         public void ResetTile()
         {
-            m_MeshRenderer.material.color = Color.white;
+            // m_MeshRenderer.material.color = Color.white;
+            m_MeshRenderer.sharedMaterial = wallMaterial;
             Coordinates = new Vector2Int(-1,-1);
             WorldPosition = Vector3.zero;
             IsBlocked = false;
@@ -124,7 +136,7 @@ namespace GridSystem
             Grid.OnResetTiles += HandleOnResetTiles;
             LevelGeneratorUI.OnResetTiles += HandleOnResetTiles;
         }
-
+        
         private void RemoveListeners()
         {
             Grid.OnResetTiles -= HandleOnResetTiles;
