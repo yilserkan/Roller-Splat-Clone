@@ -48,6 +48,8 @@ namespace Player
                     {
                         stateMachine.InvokeOnWallHit(stateMachine.SwipeDirVector3);
                         
+                        CallTileHitAnim(targetTile, stateMachine.SwipeDir);
+                        
                         stateMachine.SwitchState(PlayerStates.Idle);
                     }
                 }
@@ -60,7 +62,12 @@ namespace Player
                 stateMachine.transform.Rotate(rotateAxis,stateMachine.RotateAngle,Space.World);
             }
         }
-        
-       
+
+        private void CallTileHitAnim(Tile targetTile, Vector2Int swipeDir)
+        {
+            Direction dir = Directions.FindDirectionFromVector2Int(swipeDir);
+            
+            targetTile.Neigbors[dir].CallHitAnim(dir);
+        }
     }
 }

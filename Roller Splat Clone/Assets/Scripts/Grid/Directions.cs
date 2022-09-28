@@ -1,6 +1,9 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using UnityEngine;
+using Grid = GridSystem.Grid;
 using Random = UnityEngine.Random;
 
 public enum Direction
@@ -30,7 +33,13 @@ public static class Directions
        
         return GetRandomDirFromOtherAxis(Direction.Left);
     }
-    
+
+    public static Direction FindDirectionFromVector2Int(Vector2Int moveDir)
+    {
+        var dir = Grid.m_Directions.FirstOrDefault(x => x.Value == moveDir).Key;
+        return dir;
+    }
+
     public static Direction GetRandomDirFromOtherAxis(Direction dir)
     {
         Direction nb;

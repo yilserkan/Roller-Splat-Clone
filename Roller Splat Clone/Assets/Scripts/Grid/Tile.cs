@@ -11,6 +11,8 @@ namespace GridSystem
         [SerializeField] private Material wallMaterial;
         [SerializeField] private Material pathUncoloredMaterial;
         [SerializeField] private Material pathColoredMaterial;
+
+        [SerializeField] private TileAnimation tileAnimation;
         
         public Vector2Int Coordinates;
         public Vector3 WorldPosition;
@@ -104,6 +106,11 @@ namespace GridSystem
         public bool ControlBlockSetOnPreviousCycle(int cycleIndex)
         {
             return IsControlIndex == cycleIndex;
+        }
+
+        public void CallHitAnim(Direction hitDirection)
+        {
+            tileAnimation.PlayHitAnim(hitDirection);
         }
         
         public void ResetTile()
