@@ -1,5 +1,6 @@
 
 using GridSystem;
+using ObjectPool;
 using UnityEngine;
 
 namespace Player
@@ -7,7 +8,8 @@ namespace Player
     public class PlayerMoveState : PlayerBaseStat
     {
         private int m_CurrentPathIndex;
-  
+        private float lastParticleSpawnTime = 0;
+
         public override void OnEnter(PlayerStateMachine stateMachine)
         {
             m_CurrentPathIndex = 0;
@@ -21,6 +23,7 @@ namespace Player
               return;
             }
             
+            SpawnColorTileParticles(stateMachine);
             MovePlayer();
             //RotatePlayer();
             
@@ -66,6 +69,16 @@ namespace Player
             Direction dir = Directions.FindDirectionFromVector2Int(swipeDir);
             
             targetTile.Neigbors[dir].CallHitAnim(dir);
+        }
+
+        private void SpawnColorTileParticles(PlayerStateMachine stateMachine)
+        {
+            if (stateMachine.PassedTime> lastParticleSpawnTime)
+            {
+                TileColorParticleSpawner.Instance.OnObjectPool(stateMachine.PlayerMeshTransform.position);
+                lastParticleSpawnTime = stateMachine.PassedTime + stateMachine.ParticleSpawnInterval;
+            }
+            
         }
     }
 }

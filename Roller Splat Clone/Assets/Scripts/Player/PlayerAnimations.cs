@@ -10,7 +10,7 @@ public class PlayerAnimations : MonoBehaviour
     [SerializeField] private AnimationCurve wallHitCurve;
     [SerializeField] private AnimationCurve jumpCurve;
     [SerializeField] private float lerpDuration = 1f;
-
+    
     private Vector3 m_ScaleVector = Vector3.zero;
     private Vector3 m_SwipeDir;
     private float m_ValueToLerp;

@@ -24,6 +24,7 @@ namespace Player
         [SerializeField] private PlayerSettings playerSettings;
         [SerializeField] private MeshRenderer meshRenderer;
         [SerializeField] private Transform playerMeshTransform;
+        [SerializeField] private float particleSpawnInterval;
         
         private PlayerStates m_CurrentPlayerState = PlayerStates.None;
         private PlayerBaseStat m_CurrentBaseState;
@@ -63,7 +64,10 @@ namespace Player
         public float RaycastMultiplicator => playerSettings.RaycastMultiplicator;
         public float MoveSpeed =>  playerSettings.MoveSpeed;
         public float DeltaTime => Time.deltaTime;
+        public float PassedTime => Time.time;
 
+        public float ParticleSpawnInterval => particleSpawnInterval;
+        
         public Transform PlayerMeshTransform => playerMeshTransform;
         public Color CurrentColor => m_CurrentColor;
         public bool IsPathEmpty => Path.Count == 0;
