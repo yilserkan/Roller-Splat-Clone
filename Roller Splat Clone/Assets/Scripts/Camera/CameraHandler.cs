@@ -81,11 +81,13 @@ namespace CameraSystem
         private void AddListeners()
         {
             LevelManager.OnGenerateLevel += HandleOnGenerateLevel;
+            LevelGeneratorUI.OnGenerateLevel += HandleOnGenerateLevel;
         }
         
         private void RemoveListeners()
         {
             LevelManager.OnGenerateLevel -= HandleOnGenerateLevel;
+            LevelGeneratorUI.OnGenerateLevel += HandleOnGenerateLevel;
         }
     }
 }
