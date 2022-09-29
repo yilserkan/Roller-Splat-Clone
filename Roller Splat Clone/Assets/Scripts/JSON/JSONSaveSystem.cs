@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -19,6 +18,7 @@ namespace Json
 
         public static List<T> ReadFromJson<T>()
         {
+            CheckFileExistence();
             string content = ReadFile(GetPath());
             if (string.IsNullOrEmpty(content) || content == "")
             {
@@ -30,9 +30,19 @@ namespace Json
             return res;
         }
 
+        private static void CheckFileExistence()
+        {
+            if (!File.Exists(GetPath()))
+            {
+                File.Create(GetPath()).Close();
+            }
+        }
+
         private static string GetPath()
         {
-            return Application.streamingAssetsPath + "/" + filename;
+            // return Application.streamingAssetsPath + "/" + filename;
+            // return Path.Combine(Application.persistentDataPath, filename);
+            return Application.persistentDataPath + "/" + filename;
         }
 
         private static void WriteFile(string path, string content)
