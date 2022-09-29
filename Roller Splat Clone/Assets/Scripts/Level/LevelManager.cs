@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Effects;
 using Json;
+using MainMenu;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Grid = GridSystem.Grid;
@@ -31,10 +32,16 @@ namespace LevelSystem
 
         private void Start()
         {
+            ReadCurrentLevelIndexFromPlayerPrefs();
             ReadLevelsFromJson();
             GenerateNewLevel();
         }
-        
+
+        private void ReadCurrentLevelIndexFromPlayerPrefs()
+        {
+            m_LevelIndex = PlayerPrefs.GetInt(LevelButton.PlayerPrefsCurrentLevelIndex, 0);
+        }
+
         private void GenerateNewLevel()
         {
             if (HasUnplayedLevels)
