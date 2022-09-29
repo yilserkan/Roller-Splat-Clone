@@ -1,6 +1,4 @@
-using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace GridSystem
@@ -17,13 +15,25 @@ namespace GridSystem
 
         private Coroutine m_Lerp;
 
+        private void OnEnable()
+        {
+            Grid.OnLevelCreated += HandleOnLevelCreated;
+        }
+
         private void OnDisable()
         {
+            Grid.OnLevelCreated -= HandleOnLevelCreated;
+            
             if (m_LocalTransformChanged)
             {
                 ResetLocalPositionAndScale();
                 m_LocalTransformChanged = false;
             }
+        }
+
+        private void HandleOnLevelCreated()
+        {
+            SetLocalPositionAndScale();
         }
 
         public void PlayHitAnim(Direction dir)
@@ -41,7 +51,7 @@ namespace GridSystem
         IEnumerator Lerp(Direction direction)
         {
             float timeElapsed = 0;
-            float valueToLerp;
+            float valueToLerp = 0;
             while (timeElapsed < lerpDuration)
             {
                 valueToLerp =  wallHitCurve.Evaluate(timeElapsed/lerpDuration);
