@@ -1,11 +1,9 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using LevelSystem;
 using ObjectPool;
 using Player;
-using Unity.VisualScripting;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -24,6 +22,7 @@ namespace GridSystem
         [SerializeField] private GameObject parent;
 
         public static event Action<List<Tile>> OnFoundPlayerPath;
+        public static event Action OnLevelCreated;
         public static event Action OnLevelFinished; 
         public static event Action OnResetTiles;
         public static event Action<Vector3> OnStartPointFound;
@@ -80,6 +79,7 @@ namespace GridSystem
             m_LevelGenerator = new LevelGenerator(width, height,cycles, m_Grid,useBothAxisOnStartingPoint);
             Vector2Int startPos = m_LevelGenerator.GenerateRandomLevel();
             
+            OnLevelCreated?.Invoke();
             OnStartPointFound?.Invoke(GetWorldPosFromCoordinates(startPos));
         }
 
