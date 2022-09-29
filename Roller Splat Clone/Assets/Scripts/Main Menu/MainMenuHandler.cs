@@ -1,10 +1,7 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using Json;
 using LevelSystem;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using Utils;
 
 namespace MainMenu

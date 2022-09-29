@@ -1,11 +1,10 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using GridSystem;
 using LevelSystem;
 using UnityEngine;
 using Grid = GridSystem.Grid;
-using Random = UnityEngine.Random;
+
 
 namespace Player
 {

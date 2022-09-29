@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using Effects;
-using LevelSystem;
 using ObjectPool;
 using UnityEngine;
 
@@ -112,7 +111,10 @@ namespace GridSystem
 
         public void CallHitAnim(Direction hitDirection)
         {
-            tileAnimation.PlayHitAnim(hitDirection);
+            if (IsBlocked)
+            {
+                tileAnimation.PlayHitAnim(hitDirection);
+            }
         }
         
         public void ResetTile()

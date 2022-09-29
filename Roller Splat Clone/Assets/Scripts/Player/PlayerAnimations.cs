@@ -1,9 +1,8 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
-using Player;
 using UnityEngine;
 using Grid = GridSystem.Grid;
+
 
 public class PlayerAnimations : MonoBehaviour
 {
@@ -22,7 +21,22 @@ public class PlayerAnimations : MonoBehaviour
     private Coroutine m_Lerp;
     private delegate void DelegateFunction();
     private DelegateFunction m_MethodToCall;
-    
+
+    private void OnEnable()
+    {
+        Grid.OnLevelCreated += HandleOnLevelCreated;
+    }
+
+    private void OnDisable()
+    {
+        Grid.OnLevelCreated -= HandleOnLevelCreated;
+    }
+
+    private void HandleOnLevelCreated()
+    {
+        m_PlayingJumpAnimation = false;
+    }
+
     IEnumerator LerpDelegatMethod(DelegateFunction delFunction, AnimationCurve curve, float lerpDur)
     {
         float timeElapsed = 0;
@@ -96,4 +110,6 @@ public class PlayerAnimations : MonoBehaviour
         m_MethodToCall = Jump;
         m_Lerp = StartCoroutine(LerpDelegatMethod(m_MethodToCall,jumpCurve, jumpLerpDuration));
     }
+    
+    
 }

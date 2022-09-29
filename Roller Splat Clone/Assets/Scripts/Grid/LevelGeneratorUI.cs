@@ -1,6 +1,4 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using Json;
 using LevelSystem;
 using TMPro;
