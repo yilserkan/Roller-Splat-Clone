@@ -28,6 +28,8 @@ namespace GridSystem
         public static event Action OnResetTiles;
         public static event Action<Vector3> OnStartPointFound;
         public static event Action<Color> OnColorSet;
+        public static event Action<Color> OnBackgorundColorSet;
+        
         private Dictionary<Vector2Int, Tile> m_Grid = new Dictionary<Vector2Int, Tile>();
 
         private LevelGenerator m_LevelGenerator;
@@ -62,6 +64,9 @@ namespace GridSystem
             
             Color color = Random.ColorHSV(0f,1f,1f,1f,0.5f,1f);
             OnColorSet?.Invoke(color);
+            
+            Color backgroundColor = Random.ColorHSV(0f,1f,.5f,.5f,0.5f,1f);
+            OnBackgorundColorSet?.Invoke(backgroundColor);
             
             CreateLevel();
         }

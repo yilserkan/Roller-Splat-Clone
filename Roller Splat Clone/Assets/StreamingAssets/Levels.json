@@ -17,6 +17,18 @@
             "Width": 16,
             "Cycles": 100,
             "Seed": 815
+        },
+        {
+            "Height": 10,
+            "Width": 10,
+            "Cycles": 20,
+            "Seed": 153
+        },
+        {
+            "Height": 16,
+            "Width": 16,
+            "Cycles": 100,
+            "Seed": 331
         }
     ]
 }

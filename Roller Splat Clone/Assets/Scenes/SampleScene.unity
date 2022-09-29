@@ -2864,6 +2864,7 @@ GameObject:
   - component: {fileID: 1750422897}
   - component: {fileID: 1750422896}
   - component: {fileID: 1750422895}
+  - component: {fileID: 1750422899}
   m_Layer: 0
   m_Name: Plane_Background
   m_TagString: Untagged
@@ -2950,6 +2951,19 @@ Transform:
   m_Father: {fileID: 104318817}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1750422899
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1750422894}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b5667b8bedf50d4489ad54b255604828, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  backgroundMaterial: {fileID: 2100000, guid: c953163ff25765e46bb4d20b4ca88b7f, type: 2}
 --- !u!1 &1812623253
 GameObject:
   m_ObjectHideFlags: 0
