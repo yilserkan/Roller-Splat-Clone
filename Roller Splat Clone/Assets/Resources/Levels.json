@@ -1,0 +1,82 @@
+{
+    "Levels": [
+        {
+            "Height": 5,
+            "Width": 5,
+            "Cycles": 5,
+            "Seed": 301
+        },
+        {
+            "Height": 16,
+            "Width": 16,
+            "Cycles": 100,
+            "Seed": 331
+        },
+        {
+            "Height": 16,
+            "Width": 16,
+            "Cycles": 100,
+            "Seed": 815
+        },
+        {
+            "Height": 10,
+            "Width": 10,
+            "Cycles": 20,
+            "Seed": 153
+        },
+        {
+            "Height": 16,
+            "Width": 16,
+            "Cycles": 100,
+            "Seed": 331
+        },
+        {
+            "Height": 16,
+            "Width": 16,
+            "Cycles": 16,
+            "Seed": 377
+        },
+        {
+            "Height": 16,
+            "Width": 16,
+            "Cycles": 16,
+            "Seed": 202
+        },
+        {
+            "Height": 16,
+            "Width": 16,
+            "Cycles": 100,
+            "Seed": 530
+        },
+        {
+            "Height": 16,
+            "Width": 16,
+            "Cycles": 100,
+            "Seed": 317
+        },
+        {
+            "Height": 16,
+            "Width": 16,
+            "Cycles": 16,
+            "Seed": 734
+        },
+        {
+            "Height": 11,
+            "Width": 11,
+            "Cycles": 11,
+            "Seed": 215
+        },
+        {
+            "Height": 12,
+            "Width": 12,
+            "Cycles": 12,
+            "Seed": 143
+        },
+        {
+            "Height": 12,
+            "Width": 12,
+            "Cycles": 12,
+            "Seed": 634
+        }
+    ]
+}
