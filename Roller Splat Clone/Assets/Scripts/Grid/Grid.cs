@@ -5,6 +5,7 @@ using LevelSystem;
 using ObjectPool;
 using Player;
 using UnityEngine;
+using Utils;
 using Random = UnityEngine.Random;
 
 namespace GridSystem
@@ -12,11 +13,13 @@ namespace GridSystem
     
     public class Grid : MonoBehaviour
     {
+        [SerializeField] private PlayerStateMachine player;
+        
         [SerializeField] private int height;
         [SerializeField] private int width;
         [SerializeField] private int cycles;
         [SerializeField] private int cellsize;
-        [SerializeField] private Vector3 gridStartPosition;
+        [SerializeField] private Vector3 gridStartPosition = Vector3.zero;
         [SerializeField] private GameObject prefab;
         [SerializeField] private bool useBothAxisOnStartingPoint;
         [SerializeField] private GameObject parent;
@@ -24,8 +27,9 @@ namespace GridSystem
         public static event Action<List<Tile>> OnFoundPlayerPath;
         public static event Action OnLevelCreated;
         public static event Action OnLevelFinished; 
-        public static event Action OnResetTiles;
-        public static event Action<Vector3> OnStartPointFound;
+        //public static event Action OnResetTiles;
+        // public static event Action<Vector3> OnStartPointFound;
+        public static event Action<Vector2Int> OnStartPointFound;
         public static event Action<Color> OnColorSet;
         public static event Action<Color> OnBackgorundColorSet;
         
@@ -51,14 +55,13 @@ namespace GridSystem
         {
            RemoveListeners();
         }
-
+        
         private void HandleOnGenerateLevel(Level level)
         {
             //OnResetTiles?.Invoke();
             height = level.Height;
             width = level.Width;
             cycles = level.Cycles;
-            
             Random.InitState(level.Seed);
             
             Color color = Random.ColorHSV(0f,1f,1f,1f,0.5f,1f);
@@ -80,7 +83,16 @@ namespace GridSystem
             Vector2Int startPos = m_LevelGenerator.GenerateRandomLevel();
             
             OnLevelCreated?.Invoke();
-            OnStartPointFound?.Invoke(GetWorldPosFromCoordinates(startPos));
+            // MyLogger.Instance.Log("On Level Created");
+           Vector3 startPosition = GetWorldPosFromCoordinates(startPos);
+            // MyLogger.Instance.Log("On StartPos Found ");
+            
+            // OnStartPointFound?.Invoke(startPosition);
+            OnStartPointFound?.Invoke(startPos);
+            
+            
+            // player.HandleOnPlayerPosFound(new Vector3(1,0,1));
+            // MyLogger.Instance.Log("On StartPos Found Invoked");
         }
 
         private void ResetGrid()
@@ -115,7 +127,7 @@ namespace GridSystem
         {
             float posX = gridStartPosition.x + coordinates.x * cellsize;
             float posY = gridStartPosition.z + coordinates.y * cellsize;
-            
+
             return new Vector3(posX, 0, posY);
         }
 
@@ -200,7 +212,6 @@ namespace GridSystem
             if (m_ColoredTilesCount == m_LevelGenerator.m_PathCount)
             {
                 LevelFinished();
-                return;
             }
         }
 
@@ -215,7 +226,7 @@ namespace GridSystem
         {
             PlayerStateMachine.OnPlayerSwipeDirectionFound += HandleOnPlayerSwipeDirectionFound;
             Tile.OnTileColored += HandleOnTileColored;
-            LevelGeneratorUI.OnGenerateLevel += HandleOnGenerateLevel;
+            LevelGeneratorManager.OnGenerateLevel += HandleOnGenerateLevel;
             LevelManager.OnGenerateLevel += HandleOnGenerateLevel;
         }
 
@@ -223,7 +234,7 @@ namespace GridSystem
         {
             PlayerStateMachine.OnPlayerSwipeDirectionFound -= HandleOnPlayerSwipeDirectionFound;
             Tile.OnTileColored -= HandleOnTileColored;
-            LevelGeneratorUI.OnGenerateLevel -= HandleOnGenerateLevel;
+            LevelGeneratorManager.OnGenerateLevel -= HandleOnGenerateLevel;
             LevelManager.OnGenerateLevel -= HandleOnGenerateLevel;
         }
     }

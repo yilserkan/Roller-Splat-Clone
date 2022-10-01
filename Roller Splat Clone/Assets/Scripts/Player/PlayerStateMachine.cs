@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using GridSystem;
 using LevelSystem;
 using UnityEngine;
+using Utils;
 using Grid = GridSystem.Grid;
 
 
@@ -138,10 +139,25 @@ namespace Player
             m_CurrentBaseState = m_State[m_CurrentPlayerState];
         }
         
-        private void HandleOnPlayerPosFound(Vector3 position)
+        private void SwitchPlayerStateToIdle()
         {
+            ForceSwitchState(PlayerStates.Idle);
+        }
+        
+        public void HandleOnPlayerPosFound(Vector3 position)
+        {
+            // MyLogger.Instance.Log("On Level Index : " + position);
             Debug.Log(position);
             transform.position = position;
+            SwitchPlayerStateToIdle();
+        }
+        
+        public void HandleOnPlayerPosFound(Vector2Int position)
+        {
+            // MyLogger.Instance.Log("On Level Index : " + position);
+            Debug.Log(position);
+            transform.position = new Vector3(position.x,0,position.y);
+            SwitchPlayerStateToIdle();
         }
 
         private void HandleOnPlayerSwipe(Vector2Int swipeDir)
@@ -159,7 +175,6 @@ namespace Player
         
         private void HandleOnLevelFinished()
         {
-            Debug.Log("------------------------- Player state finished");
             LevelFinishedColorParticleSpawner.Instance.OnObjectPool(transform.position);
             PlayLevelFinishedAnimation();
             SwitchState(PlayerStates.Finish);
@@ -173,15 +188,9 @@ namespace Player
             meshRenderer.sharedMaterial.color = m_CurrentColor;
         }
         
-        private void HandleOnGenerateLevel(Level obj)
-        {
-            ForceSwitchState(PlayerStates.Idle);
-        }
-
         private void AddListeners()
         {
             PlayerInputSystem.OnPlayerSwipe += HandleOnPlayerSwipe;
-            LevelManager.OnGenerateLevel += HandleOnGenerateLevel;
             Grid.OnFoundPlayerPath += HandleOnFoundPlayerPath;
             Grid.OnStartPointFound += HandleOnPlayerPosFound;
             Grid.OnLevelFinished += HandleOnLevelFinished;
@@ -191,10 +200,9 @@ namespace Player
         private void RemoveListeners()
         {
             PlayerInputSystem.OnPlayerSwipe -= HandleOnPlayerSwipe;
-            LevelManager.OnGenerateLevel -= HandleOnGenerateLevel;
             Grid.OnFoundPlayerPath -= HandleOnFoundPlayerPath;
             Grid.OnStartPointFound -= HandleOnPlayerPosFound;
-            Grid.OnLevelFinished += HandleOnLevelFinished;
+            Grid.OnLevelFinished -= HandleOnLevelFinished;
             Grid.OnColorSet -= HandleOnColorSet;
         }
     }
