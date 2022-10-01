@@ -4,7 +4,6 @@ using UnityEngine;
 
 namespace MainMenu
 {
-
     public class LevelSelection : MonoBehaviour
     {
         [SerializeField] private Animation animation;
@@ -14,11 +13,6 @@ namespace MainMenu
         public void _CloseLevelSelection()
         {
             animation.Play(m_LevelClose);
-        }
-
-        public void _DisableLevelSelectionGameobject()
-        {
-            gameObject.SetActive(false);
         }
     }
 }
