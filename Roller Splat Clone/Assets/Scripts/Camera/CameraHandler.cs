@@ -5,7 +5,7 @@ using UnityEngine;
 namespace CameraSystem
 {
     public class CameraHandler : MonoBehaviour
-    {
+    { 
         [SerializeField] private Transform cameraParent;
 
         [Range(60, 90)] 
@@ -34,13 +34,9 @@ namespace CameraSystem
 
         private void SetCameraPosition()
         {
-            float xPosition = (float)m_Width / 2;
-            xPosition -= .5f;
+            float xPosition = 0, yPosition = 0, zPosition = 0 ;
             
-            float zPosition = (float)m_Height / 2;
-            zPosition -= .5f;
-
-            float yPosition = m_Width * 2;
+            FindNewPosition(ref xPosition, ref yPosition, ref zPosition);
             
             SetCameraRotation(yPosition, ref zPosition);
 
@@ -48,6 +44,25 @@ namespace CameraSystem
             Quaternion newRot = Quaternion.Euler(cameraLookAngle, 0,0);
             
             cameraParent.SetPositionAndRotation(newPos,newRot);
+            
+        }
+
+        private void FindNewPosition(ref float xPosition, ref float yPosition, ref float zPosition )
+        {
+            xPosition = (float)m_Width / 2;
+            xPosition -= .5f;
+            
+            zPosition = (float)m_Height / 2;
+            zPosition -= .5f;
+
+            if (m_Width >= m_Height)
+            {
+                yPosition = m_Width * 2;
+            }
+            else
+            {
+                yPosition = m_Height * 1.25f;
+            }
             
         }
 
@@ -61,8 +76,6 @@ namespace CameraSystem
             
             zPosition -= zSubstractValue;
         }
-
-  
         
         private void HandleOnGenerateLevel(Level level)
         {
@@ -71,19 +84,17 @@ namespace CameraSystem
 
             SetCameraPosition();
         }
-
-    
         
         private void AddListeners()
         {
             LevelManager.OnGenerateLevel += HandleOnGenerateLevel;
-            LevelGeneratorUI.OnGenerateLevel += HandleOnGenerateLevel;
+            LevelGeneratorManager.OnGenerateLevel += HandleOnGenerateLevel;
         }
         
         private void RemoveListeners()
         {
             LevelManager.OnGenerateLevel -= HandleOnGenerateLevel;
-            LevelGeneratorUI.OnGenerateLevel -= HandleOnGenerateLevel;
+            LevelGeneratorManager.OnGenerateLevel -= HandleOnGenerateLevel;
         }
     }
 }

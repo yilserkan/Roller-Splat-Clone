@@ -7,10 +7,10 @@ namespace CameraSystem
 {
     public class CameraEffects : MonoBehaviour
     {
+        [SerializeField] private List<ParticleSystem> confettiParticles;
+        
         [SerializeField] private float shakeMagnitude;
         [SerializeField] private float shakeDuration;
-
-        [SerializeField] private List<ParticleSystem> confettiParticles;
         
         private void OnEnable()
         {
@@ -21,6 +21,7 @@ namespace CameraSystem
         {
             RemoveListeners();
         }
+        
         IEnumerator ShakeCamera()
         {
             Vector3 startLocalPos = transform.localPosition;
