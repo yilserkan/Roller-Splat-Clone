@@ -1,5 +1,8 @@
 using System;
 using System.Collections.Generic;
+using GameUI;
+using LevelSystem;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using Grid = GridSystem.Grid;
@@ -8,12 +11,12 @@ namespace Effects
 {
     public class LevelFinishEffects : MonoBehaviour
     {
+        [SerializeField] private TextMeshProUGUI levelCompleteText;
         [SerializeField] private List<Image> images;
         [SerializeField] private Animation animation;
 
-        private static string PlayLevelFinish = "Animation_LevelComplete";
-        private static string PlayResetLevelFinish = "Animation_ResetLevelFinish";
-        
+        private const string m_PlayLevelFinish = "Animation_LevelComplete";
+        private const string m_PlayResetLevelFinish = "Animation_ResetLevelFinish";
         public static event Action OnLoadNextLevel;
         public static event Action OnResetTiles;
         
@@ -29,19 +32,19 @@ namespace Effects
 
         private void Start()
         {
-            animation.Play(PlayResetLevelFinish);
+            animation.Play(m_PlayResetLevelFinish);
         }
 
         public void _TapToContinue()
         {
             OnResetTiles?.Invoke();
             OnLoadNextLevel?.Invoke();
-            animation.Play(PlayResetLevelFinish);
+            animation.Play(m_PlayResetLevelFinish);
         }
         
         private void PlayLevelFinishAnimation()
         {
-            animation.Play(PlayLevelFinish);
+            animation.Play(m_PlayLevelFinish);
         }
 
         private void ChangeImageColors(Color color)
@@ -60,18 +63,32 @@ namespace Effects
         {
             ChangeImageColors(color);
         }
-
+        
+        private void HandleOnLevelIndexFound(int levelIndex)
+        {
+            int level = (levelIndex + 1);
+            levelCompleteText.text = $"LEVEL {level}";
+        }
+        
+        private void HandleOnResetLevel()
+        {
+            animation.Play(m_PlayResetLevelFinish);
+        }
+        
         private void AddListeners()
         {
             Grid.OnLevelFinished += HandleOnLevelFinished;
             Grid.OnColorSet += HandleOnColorSet;
+            LevelManager.OnLevelIndexFound += HandleOnLevelIndexFound;
+            LevelMainUIHandler.OnResetLevel += HandleOnResetLevel;
         }
-
+        
         private void RemoveListeners()
         {
             Grid.OnLevelFinished -= HandleOnLevelFinished;
             Grid.OnColorSet -= HandleOnColorSet;
+            LevelManager.OnLevelIndexFound -= HandleOnLevelIndexFound;
+            LevelMainUIHandler.OnResetLevel -= HandleOnResetLevel;
         }
-        
     }
 }

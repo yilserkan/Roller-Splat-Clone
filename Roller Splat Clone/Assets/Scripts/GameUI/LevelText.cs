@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
-using Utils;
 
 namespace LevelSystem
 {
@@ -25,7 +24,6 @@ namespace LevelSystem
         {
             int level = (levelIndex + 1);
             levelText.text = $"LEVEL {level}";
-            MyLogger.Instance.Log("Level Indes Set in ui");
         }
         
         private void AddListeners()
