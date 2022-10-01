@@ -61,7 +61,9 @@ namespace GridSystem
                 Vector2Int newCoords = NOT_FOUND;
                 newCoords = TryFindPath(currentTileCoordinates ,ref newCoords);
 
-                InitializeStartDirection(ref startDirection, ref startDirectionInitialized);
+                
+                
+                InitializeStartDirection(ref startDirection, ref startDirectionInitialized, newCoords);
                 SetPrevoiusDirection();
                 
                 if (!PathFound(newCoords) && !triedOppositeStartDirection && m_UseBothAxisOnStartingPoint)
@@ -101,6 +103,7 @@ namespace GridSystem
                     newCoords = TryDirection(coordinates,m_CurrentDirection);
                 }
             }
+            
 
             return newCoords;
         }
@@ -119,12 +122,15 @@ namespace GridSystem
             m_CurrentDirection = newDir;
         }
         
-        private void InitializeStartDirection(ref Direction startDirection, ref bool startDirectionInitialized)
+        private void InitializeStartDirection(ref Direction startDirection, ref bool startDirectionInitialized, Vector2Int coords)
         {
             if (!startDirectionInitialized)
             {
                 startDirection = m_CurrentDirection;
                 startDirectionInitialized = true;
+                
+                Direction randomDir = Directions.GetRandomDirFromOtherAxis(m_CurrentDirection);
+                m_Grid[coords].Neigbors[randomDir].IsControlBlock = true;
             }
         }
 
@@ -179,7 +185,8 @@ namespace GridSystem
             }
             
             Tile curTile = m_Grid[startCoordinates];
-
+            Debug.Log("Start Coords " + curTile.Coordinates + "Direction + " + m_CurrentDirection);
+            
             int randomEndPoint = Random.Range(0, endPointCount);
             Tile randomEndPointTile = possibleEndPoints[randomEndPoint];
 
