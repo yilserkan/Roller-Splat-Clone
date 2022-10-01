@@ -14,5 +14,10 @@ namespace MainMenu
         {
             animation.Play(m_LevelClose);
         }
+
+        public void _DisableLevelSelectionGameobject()
+        {
+            gameObject.SetActive(false);
+        }
     }
 }
