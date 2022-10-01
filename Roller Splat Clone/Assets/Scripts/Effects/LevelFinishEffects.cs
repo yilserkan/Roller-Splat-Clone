@@ -25,7 +25,7 @@ namespace Effects
             AddListeners();
         }
 
-        private void OnDisable()
+        private void OnDestroy()
         {
             RemoveListeners();
         }
@@ -33,6 +33,7 @@ namespace Effects
         private void Start()
         {
             animation.Play(m_PlayResetLevelFinish);
+            gameObject.SetActive(false);
         }
 
         public void _TapToContinue()
@@ -40,10 +41,12 @@ namespace Effects
             OnResetTiles?.Invoke();
             OnLoadNextLevel?.Invoke();
             animation.Play(m_PlayResetLevelFinish);
+            gameObject.SetActive(false);
         }
         
         private void PlayLevelFinishAnimation()
         {
+            gameObject.SetActive(true);
             animation.Play(m_PlayLevelFinish);
         }
 
@@ -73,6 +76,7 @@ namespace Effects
         private void HandleOnResetLevel()
         {
             animation.Play(m_PlayResetLevelFinish);
+            gameObject.SetActive(false);
         }
         
         private void AddListeners()

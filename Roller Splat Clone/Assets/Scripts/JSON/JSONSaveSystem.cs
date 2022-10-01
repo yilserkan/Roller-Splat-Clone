@@ -21,6 +21,7 @@ namespace Json
 
         public static List<T> ReadFromJson<T>()
         {
+            Debug.Log(GetPath());
             string content = ReadFile(GetPath());
             if (string.IsNullOrEmpty(content) || content == "")
             {

@@ -1,5 +1,7 @@
 using LevelSystem;
+using Player;
 using UnityEngine;
+using PlayerSettings = UnityEditor.PlayerSettings;
 
 
 namespace CameraSystem
@@ -30,6 +32,7 @@ namespace CameraSystem
         {
             Application.targetFrameRate = 60;
             Camera.main.aspect = 9f/16f;
+            PlayerSettings.accelerometerFrequency = 0;
         }
 
         private void SetCameraPosition()
