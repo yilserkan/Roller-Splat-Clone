@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using Effects;
+using GameUI;
+using LevelSystem;
 using ObjectPool;
 using UnityEngine;
 
@@ -144,16 +146,18 @@ namespace GridSystem
         
         private void AddListeners()
         {
-            Grid.OnResetTiles += HandleOnResetTiles;
-            LevelGeneratorUI.OnResetTiles += HandleOnResetTiles;
+            //Grid.OnResetTiles += HandleOnResetTiles;
+            LevelGeneratorManager.OnResetTiles += HandleOnResetTiles;
             LevelFinishEffects.OnResetTiles += HandleOnResetTiles;
+            LevelMainUIHandler.OnResetLevel += HandleOnResetTiles;
         }
         
         private void RemoveListeners()
         {
-            Grid.OnResetTiles -= HandleOnResetTiles;
-            LevelGeneratorUI.OnResetTiles -= HandleOnResetTiles;
+            //Grid.OnResetTiles -= HandleOnResetTiles;
+            LevelGeneratorManager.OnResetTiles -= HandleOnResetTiles;
             LevelFinishEffects.OnResetTiles -= HandleOnResetTiles;
+            LevelMainUIHandler.OnResetLevel -= HandleOnResetTiles;
         }
     }
 }
