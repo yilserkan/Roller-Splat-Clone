@@ -33,8 +33,8 @@ namespace Json
         
         private static string GetPath()
         {
-            // return Path.Combine(Application.persistentDataPath, filename);
-            return Application.dataPath + "/Resources/" + filename;
+            return Path.Combine(Application.persistentDataPath, filename);
+            // return Application.dataPath + "/Resources/" + filename;
         }
 
         private static void WriteFile(string path, string content)

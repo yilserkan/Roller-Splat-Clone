@@ -7,7 +7,6 @@ using Json;
 using MainMenu;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using Utils;
 
 namespace LevelSystem
 {
@@ -40,22 +39,19 @@ namespace LevelSystem
 
         private void ReadCurrentLevelIndexFromPlayerPrefs()
         {
-            MyLogger.Instance.Log("On Get Level Index");
             m_LevelIndex = PlayerPrefs.GetInt(LevelButton.PlayerPrefsCurrentLevelIndex, 0);
-            MyLogger.Instance.Log("On Level Index : " + m_LevelIndex);
         }
 
         private void ReadLevelsFromJson()
         {
-             m_Levels = JSONSaveSystem.ReadLevels();
-             MyLogger.Instance.Log("Levels Read from Json");
+             // m_Levels = JSONSaveSystem.ReadLevels();
+             m_Levels = JSONSaveSystem.ReadFromJson<Level>();
         }
    
         private void GenerateNewLevel()
         {
             if (HasUnplayedLevels)
             {
-                MyLogger.Instance.Log("Generating new level");
                 OnLevelIndexFound?.Invoke(m_LevelIndex);
                 Debug.Log("*------------------------- Level Finished");
                 OnGenerateLevel?.Invoke(m_Levels[m_LevelIndex]);
