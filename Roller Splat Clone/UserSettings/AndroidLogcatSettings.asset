@@ -3,7 +3,7 @@
     "m_SelectedPackage": {
         "deviceId": "R68T503PNWZ",
         "name": "com.DefaultCompany.RollerSplatClone",
-        "processId": 2467,
+        "processId": 32522,
         "exited": false
     },
     "m_SelectedPriority": 0,
@@ -60,6 +60,18 @@
             "deviceId": "R68T503PNWZ",
             "name": "com.DefaultCompany.RollerSplatClone",
             "processId": 2467,
+            "exited": false
+        },
+        {
+            "deviceId": "R68T503PNWZ",
+            "name": "com.DefaultCompany.RollerSplatClone",
+            "processId": 28836,
+            "exited": false
+        },
+        {
+            "deviceId": "R68T503PNWZ",
+            "name": "com.DefaultCompany.RollerSplatClone",
+            "processId": 32522,
             "exited": false
         }
     ],

@@ -7,7 +7,9 @@ namespace Player
     public class PlayerMoveState : PlayerBaseStat
     {
         private int m_CurrentPathIndex;
-        private float lastParticleSpawnTime = 0;
+        private float m_LastParticleSpawnTime = 0;
+
+        private bool CanSpawnParticle(float time) => time > m_LastParticleSpawnTime;
 
         public override void OnEnter(PlayerStateMachine stateMachine)
         {
@@ -46,7 +48,6 @@ namespace Player
                     }
                     else
                     {
-                        // stateMachine.InvokeOnWallHit(stateMachine.SwipeDirVector3);
                         stateMachine.PlayWallHitAnimation();
                         
                         CallTileHitAnim(targetTile, stateMachine.SwipeDir);
@@ -73,12 +74,11 @@ namespace Player
 
         private void SpawnColorTileParticles(PlayerStateMachine stateMachine)
         {
-            if (stateMachine.PassedTime> lastParticleSpawnTime)
+            if (CanSpawnParticle(stateMachine.PassedTime))
             {
                 TileColorParticleSpawner.Instance.OnObjectPool(stateMachine.PlayerMeshTransform.position);
-                lastParticleSpawnTime = stateMachine.PassedTime + stateMachine.ParticleSpawnInterval;
+                m_LastParticleSpawnTime = stateMachine.PassedTime + stateMachine.ParticleSpawnInterval;
             }
-            
         }
     }
 }

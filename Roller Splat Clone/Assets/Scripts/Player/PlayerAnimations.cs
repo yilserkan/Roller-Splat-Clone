@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using UnityEngine;
 using Grid = GridSystem.Grid;
@@ -15,7 +14,6 @@ public class PlayerAnimations : MonoBehaviour
     private Vector3 m_SwipeDir;
     private float m_ValueToLerp;
     private float m_JumpStartValue;
-
     private bool m_PlayingJumpAnimation = false;
     
     private Coroutine m_Lerp;
@@ -24,20 +22,49 @@ public class PlayerAnimations : MonoBehaviour
 
     private void OnEnable()
     {
-        Grid.OnLevelCreated += HandleOnLevelCreated;
+        AddListeners();
     }
 
     private void OnDisable()
     {
-        Grid.OnLevelCreated -= HandleOnLevelCreated;
+        RemoveListeners();
     }
-
-    private void HandleOnLevelCreated()
+    
+    public void PlayWallHitAnimation(Vector3 swipeDirection)
     {
-        m_PlayingJumpAnimation = false;
+        if (m_PlayingJumpAnimation)
+        {
+            return;
+        }
+        
+        StopLerp();
+        
+        m_SwipeDir = swipeDirection;
+        
+        m_MethodToCall = ScaleAround;
+        m_Lerp = StartCoroutine(LerpDelegateMethod(m_MethodToCall, wallHitCurve, lerpDuration));
+    } 
+    
+    public void PlayLevelFinishedAnimation()
+    {
+        StopLerp();
+
+        m_PlayingJumpAnimation = true;
+        m_JumpStartValue = transform.position.y;
+        
+        m_MethodToCall = Jump;
+        m_Lerp = StartCoroutine(LerpDelegateMethod(m_MethodToCall,jumpCurve, jumpLerpDuration));
     }
 
-    IEnumerator LerpDelegatMethod(DelegateFunction delFunction, AnimationCurve curve, float lerpDur)
+    private void StopLerp()
+    {
+        if (m_Lerp != null)
+        {
+            StopCoroutine(m_Lerp);
+        }
+    }
+    
+    IEnumerator LerpDelegateMethod(DelegateFunction delFunction, AnimationCurve curve, float lerpDur)
     {
         float timeElapsed = 0;
         while (timeElapsed < lerpDur)
@@ -51,7 +78,7 @@ public class PlayerAnimations : MonoBehaviour
     
     private void ScaleAround()
     {
-        if (m_SwipeDir == Vector3.forward || m_SwipeDir == Vector3.back)
+        if (Directions.IsDirectionVertical(m_SwipeDir))
         {
             m_ScaleVector = new Vector3(1, 1, m_ValueToLerp);
         }
@@ -67,49 +94,36 @@ public class PlayerAnimations : MonoBehaviour
             m_ScaleVector.y / transform.localScale.y,
             m_ScaleVector.z / transform.localScale.z
         );
+        
         pivotDelta.Scale(scaleFactor);
         transform.transform.localPosition = pivot + pivotDelta;
             
         transform.localScale = m_ScaleVector;
-            
     }
 
     private void Jump()
     {
-        Vector3 newPos = new Vector3(transform.position.x, m_JumpStartValue + m_ValueToLerp, transform.position.z);
+        Vector3 newPos = new Vector3(
+            transform.position.x, 
+            m_JumpStartValue + m_ValueToLerp, 
+            transform.position.z
+            );
+        
         transform.position = newPos;
     }
-    
-    public void PlayWallHitAnimation(Vector3 swipeDirection)
-    {
-        if (m_PlayingJumpAnimation)
-        {
-            return;
-        }
-        
-        if (m_Lerp != null)
-        {
-            StopCoroutine(m_Lerp);
-        }
 
-        m_SwipeDir = swipeDirection;
-        
-        m_MethodToCall = ScaleAround;
-        m_Lerp = StartCoroutine(LerpDelegatMethod(m_MethodToCall, wallHitCurve, lerpDuration));
-    } 
-    public void PlayLevelFinishedAnimation()
+    private void HandleOnLevelCreated()
     {
-        if (m_Lerp != null)
-        {
-            StopCoroutine(m_Lerp);
-        }
-
-        m_PlayingJumpAnimation = true;
-        m_JumpStartValue = transform.position.y;
-        
-        m_MethodToCall = Jump;
-        m_Lerp = StartCoroutine(LerpDelegatMethod(m_MethodToCall,jumpCurve, jumpLerpDuration));
+        m_PlayingJumpAnimation = false;
     }
     
-    
+    private void AddListeners()
+    {
+        Grid.OnLevelCreated += HandleOnLevelCreated;
+    }
+
+    private void RemoveListeners()
+    {
+        Grid.OnLevelCreated -= HandleOnLevelCreated;
+    }
 }

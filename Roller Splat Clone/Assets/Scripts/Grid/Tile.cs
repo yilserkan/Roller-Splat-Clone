@@ -22,12 +22,15 @@ namespace GridSystem
         public bool IsBlocked;
         public bool IsControlBlock;
         public bool IsColored;
-        public int IsControlIndex;
+        public int ControlIndex;
         public Dictionary<Direction, Tile> Neigbors;
         
         private MeshRenderer m_MeshRenderer;
         private bool m_PathPosSet = false;
-
+        
+        private bool CanBeColored => !IsColored && !IsBlocked;
+        private bool ControlIndexSet => ControlIndex != -1;
+        private bool PathColoredMaterialSet(Color color) => pathColoredMaterial.color == color;
         public static event Action OnTileColored;
 
         private void Awake()
@@ -65,25 +68,23 @@ namespace GridSystem
 
         public void ColorTile(Color color)
         {
-            if (pathColoredMaterial.color != color)
+            if (!PathColoredMaterialSet(color))
             {
                 pathColoredMaterial.color = color;
             }
             
-            if (!IsColored && !IsBlocked)
+            if (CanBeColored)
             {
-                // m_MeshRenderer.material.color = color;
                 m_MeshRenderer.sharedMaterial = pathColoredMaterial;
                 IsColored = true;
                 OnTileColored?.Invoke();
             }
         }
-        
+
         public void UnblockTile()
         {
             if (IsBlocked)
             {
-                // m_MeshRenderer.material.color = Color.gray;
                 m_MeshRenderer.sharedMaterial = pathUncoloredMaterial;
                 transform.position += Vector3.down;
                 IsBlocked = false;
@@ -100,15 +101,15 @@ namespace GridSystem
         }
         private void SetControlIndex(int index)
         {
-            if (IsControlIndex == -1)
+            if (!ControlIndexSet)
             {
-                IsControlIndex = index;
+                ControlIndex = index;
             }
         }
 
         public bool ControlBlockSetOnPreviousCycle(int cycleIndex)
         {
-            return IsControlIndex == cycleIndex;
+            return ControlIndex == cycleIndex;
         }
 
         public void CallHitAnim(Direction hitDirection)
@@ -127,7 +128,7 @@ namespace GridSystem
             WorldPosition = Vector3.zero;
             IsBlocked = false;
             IsColored = false;
-            IsControlIndex = -1;
+            ControlIndex = -1;
             m_PathPosSet = false;
             Neigbors = new Dictionary<Direction, Tile>()
             {
@@ -146,7 +147,6 @@ namespace GridSystem
         
         private void AddListeners()
         {
-            //Grid.OnResetTiles += HandleOnResetTiles;
             LevelGeneratorManager.OnResetTiles += HandleOnResetTiles;
             LevelFinishEffects.OnResetTiles += HandleOnResetTiles;
             LevelMainUIHandler.OnResetLevel += HandleOnResetTiles;
@@ -154,7 +154,6 @@ namespace GridSystem
         
         private void RemoveListeners()
         {
-            //Grid.OnResetTiles -= HandleOnResetTiles;
             LevelGeneratorManager.OnResetTiles -= HandleOnResetTiles;
             LevelFinishEffects.OnResetTiles -= HandleOnResetTiles;
             LevelMainUIHandler.OnResetLevel -= HandleOnResetTiles;

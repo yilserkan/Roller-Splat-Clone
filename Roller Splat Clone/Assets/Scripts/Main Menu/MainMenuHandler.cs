@@ -1,8 +1,6 @@
 using System.Collections.Generic;
 using Json;
 using LevelSystem;
-using System;
-using System.Linq;
 using UnityEngine;
 using Utils;
 
@@ -17,7 +15,6 @@ namespace MainMenu
 
         private void Start()
         {
-            //JSONSaveSystem.CheckFileExistence();
             ReadLevelsFromJson();
             CreateLevelButtons();
         }
@@ -40,16 +37,9 @@ namespace MainMenu
 
             }
         }
-
-        public void _Play()
-        {
-            //SceneManager.LoadScene(1);
-            //SceneChanger.LoadScene(SceneChanger.GameScene);
-        }
-
+        
         public void _Generate()
         {
-            //SceneManager.LoadScene(2);
             SceneChanger.LoadScene(SceneChanger.LevelGeneratorScene);
         }
     }

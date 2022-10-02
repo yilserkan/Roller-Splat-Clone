@@ -36,52 +36,39 @@ namespace Player
         private List<Tile> m_Path = new List<Tile>();
         private Color m_CurrentColor;
         
-        public Vector2Int SwipeDir
-        {
-            get => m_SwipeDir;
-            private set => m_SwipeDir = value;
-        }
-
-        public Vector3 SwipeDirVector3
-        {
-            get => new Vector3(m_SwipeDir.x, 0, m_SwipeDir.y);
-        }
-        
         public List<Tile> Path
         {
             get => m_Path;
             
             set => m_Path = value;
-            
+        } 
+        
+        public Vector2Int SwipeDir
+        {
+            get => m_SwipeDir;
+            private set => m_SwipeDir = value;
         }
-
-        public void EnablePlayerInputs() => inputSystem.EnablePlayerInputs();
-        public void DisablePlayerInputs() => inputSystem.DisablePlayerInputs();
-
-        public void PlayWallHitAnimation() => playerAnimations.PlayWallHitAnimation(SwipeDirVector3);
-        public void PlayLevelFinishedAnimation() => playerAnimations.PlayLevelFinishedAnimation();
-        private void OnStateEnter() => m_CurrentBaseState?.OnEnter(this);
-        private void OnStateExit() => m_CurrentBaseState?.OnExit(this);
-        private bool StateChanged(PlayerStates newState) => newState != m_CurrentPlayerState;
-        public float MaxDistance => playerSettings.MaxDistance;
+        public Vector3 SwipeDirVector3 => new Vector3(m_SwipeDir.x, 0, m_SwipeDir.y);
+        
         public float RotateAngle => playerSettings.RotateAngle;
-        public float RaycastMultiplicator => playerSettings.RaycastMultiplicator;
         public float MoveSpeed =>  playerSettings.MoveSpeed;
         public float DeltaTime => Time.deltaTime;
         public float PassedTime => Time.time;
-
         public float ParticleSpawnInterval => particleSpawnInterval;
-        
         public Transform PlayerMeshTransform => playerMeshTransform;
         public Color CurrentColor => m_CurrentColor;
         public bool IsPathEmpty => Path.Count == 0;
         public bool IsPathLeft(int currentPathIndex) => Path.Count > currentPathIndex;
         public bool HasPlayerPassedTile(Vector3 tilePos) => (tilePos - transform.position).sqrMagnitude < 0.1 * 0.1;
+        public void EnablePlayerInputs() => inputSystem.EnablePlayerInputs();
+        public void DisablePlayerInputs() => inputSystem.DisablePlayerInputs();
+        public void PlayWallHitAnimation() => playerAnimations.PlayWallHitAnimation(SwipeDirVector3);
+        public void PlayLevelFinishedAnimation() => playerAnimations.PlayLevelFinishedAnimation();
+        private void OnStateEnter() => m_CurrentBaseState?.OnEnter(this);
+        private void OnStateExit() => m_CurrentBaseState?.OnExit(this);
+        private bool StateChanged(PlayerStates newState) => newState != m_CurrentPlayerState;
         public static event Action<Vector3, Vector2Int> OnPlayerSwipeDirectionFound;
-        // public static event Action<Vector3> OnWallHit;
-
-        // public void InvokeOnWallHit(Vector3 swipeDirection) => OnWallHit?.Invoke(swipeDirection);
-
+        
         private Dictionary<PlayerStates, PlayerBaseStat> m_State = 
             new Dictionary<PlayerStates, PlayerBaseStat>()
         {
@@ -146,16 +133,12 @@ namespace Player
         
         public void HandleOnPlayerPosFound(Vector3 position)
         {
-            // MyLogger.Instance.Log("On Level Index : " + position);
-            Debug.Log(position);
             transform.position = position;
             SwitchPlayerStateToIdle();
         }
         
         public void HandleOnPlayerPosFound(Vector2Int position)
         {
-            // MyLogger.Instance.Log("On Level Index : " + position);
-            Debug.Log(position);
             transform.position = new Vector3(position.x,0,position.y);
             SwitchPlayerStateToIdle();
         }
@@ -184,7 +167,6 @@ namespace Player
         private void HandleOnColorSet(Color color)
         {
             m_CurrentColor = color;
-            //meshRenderer.material.color = m_CurrentColor;
             meshRenderer.sharedMaterial.color = m_CurrentColor;
         }
         

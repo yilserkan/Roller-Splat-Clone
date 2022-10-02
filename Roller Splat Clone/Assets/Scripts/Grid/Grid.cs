@@ -1,11 +1,10 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
+// using System.Linq;
 using LevelSystem;
 using ObjectPool;
 using Player;
 using UnityEngine;
-using Utils;
 using Random = UnityEngine.Random;
 
 namespace GridSystem
@@ -20,16 +19,14 @@ namespace GridSystem
         [SerializeField] private int cycles;
         [SerializeField] private int cellsize;
         [SerializeField] private Vector3 gridStartPosition = Vector3.zero;
-        [SerializeField] private GameObject prefab;
         [SerializeField] private bool useBothAxisOnStartingPoint;
-        [SerializeField] private GameObject parent;
-
+        
         public static event Action<List<Tile>> OnFoundPlayerPath;
         public static event Action OnLevelCreated;
         public static event Action OnLevelFinished; 
         //public static event Action OnResetTiles;
-        // public static event Action<Vector3> OnStartPointFound;
-        public static event Action<Vector2Int> OnStartPointFound;
+        public static event Action<Vector3> OnStartPointFound;
+        // public static event Action<Vector2Int> OnStartPointFound;
         public static event Action<Color> OnColorSet;
         public static event Action<Color> OnBackgorundColorSet;
         
@@ -58,7 +55,6 @@ namespace GridSystem
         
         private void HandleOnGenerateLevel(Level level)
         {
-            //OnResetTiles?.Invoke();
             height = level.Height;
             width = level.Width;
             cycles = level.Cycles;
@@ -83,16 +79,10 @@ namespace GridSystem
             Vector2Int startPos = m_LevelGenerator.GenerateRandomLevel();
             
             OnLevelCreated?.Invoke();
-            // MyLogger.Instance.Log("On Level Created");
-           Vector3 startPosition = GetWorldPosFromCoordinates(startPos);
-            // MyLogger.Instance.Log("On StartPos Found ");
             
-            // OnStartPointFound?.Invoke(startPosition);
-            OnStartPointFound?.Invoke(startPos);
-            
-            
-            // player.HandleOnPlayerPosFound(new Vector3(1,0,1));
-            // MyLogger.Instance.Log("On StartPos Found Invoked");
+            Vector3 startPosition = GetWorldPosFromCoordinates(startPos);
+            OnStartPointFound?.Invoke(startPosition);
+            // OnStartPointFound?.Invoke(startPos);
         }
 
         private void ResetGrid()
@@ -175,7 +165,9 @@ namespace GridSystem
         public List<Tile> FindPlayerPath(Vector2Int startCoordinate, Vector2Int moveDir)
         {
             List<Tile> path = new List<Tile>();
-            var dir = m_Directions.FirstOrDefault(x => x.Value == moveDir).Key;
+            // var dir = m_Directions.FirstOrDefault(x => x.Value == moveDir).Key;
+
+            var dir = FindDirectionFromVector2Int(moveDir);
             
             Vector2Int currentCoordinate = startCoordinate;
             path.Add(m_Grid[currentCoordinate]);
@@ -189,6 +181,20 @@ namespace GridSystem
             return path;
         }
 
+        private Direction FindDirectionFromVector2Int(Vector2Int coordinates)
+        {
+            for (int i = 0; i < m_Directions.Count; i++)
+            {
+                Direction direction = (Direction)i;
+                if (m_Directions[direction] == coordinates)
+                {
+                    return direction;
+                }
+            }
+
+            return Direction.Up;
+        }
+        
         public void ResetAllTiles()
         {
             foreach (var tile in m_Grid)

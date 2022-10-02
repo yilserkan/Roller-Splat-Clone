@@ -8,19 +8,18 @@ namespace Player
         [SerializeField] private float touchDetectionThreshold;
         
         private Vector2 m_StartTouchPosition;
-        private Vector2 m_LastTouchPosition;
-
+        
         private bool m_IsTouching;
-
-        public static event Action<Vector2Int> OnPlayerSwipe; 
-
-
         private bool IsTouching => Input.touchCount > 0;
-        private bool TouchingStarted => m_IsTouching;
+        private bool IsTouchStartPositionSet => m_IsTouching;
+
+        private bool IsSwipeDirHorizontal(Vector2 swipeDir) => Mathf.Abs(swipeDir.x) >= Mathf.Abs(swipeDir.y);
 
         private bool PassedThreshold(Vector2 touchPos) => 
             Vector2.SqrMagnitude(m_StartTouchPosition - touchPos) >
                                        touchDetectionThreshold * touchDetectionThreshold;
+        
+        public static event Action<Vector2Int> OnPlayerSwipe; 
         
         private void Update()
         {
@@ -29,7 +28,7 @@ namespace Player
                 Touch touch = Input.GetTouch(0);
                 Vector2 touchPosition = touch.position;
 
-                if (!TouchingStarted)
+                if (!IsTouchStartPositionSet)
                 {
                     SetTouchStartPosition(touchPosition);
                 }
@@ -41,8 +40,6 @@ namespace Player
                     Vector2Int swipeDir = FindMoveDirection(touchPosition);
                     OnPlayerSwipe?.Invoke(swipeDir);
                 }
-
-                m_LastTouchPosition = touchPosition;
             }
             else
             {
@@ -54,7 +51,7 @@ namespace Player
         {
             Vector2 swipeDir = (touchPos - m_StartTouchPosition).normalized;
 
-            if (Mathf.Abs(swipeDir.x) >=  Mathf.Abs(swipeDir.y))
+            if (IsSwipeDirHorizontal(swipeDir))
             {
                 swipeDir = new Vector2(swipeDir.x, 0).normalized;
             }

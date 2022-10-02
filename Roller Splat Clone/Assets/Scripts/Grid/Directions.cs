@@ -76,5 +76,13 @@ public static class Directions
 
         return nb;
     }
-
+    
+    public static bool IsDirectionVertical(Direction direction)
+    {
+        return direction == Direction.Up || direction == Direction.Down;
+    }
+    public static bool IsDirectionVertical(Vector3 direction)
+    {
+        return direction == Vector3.forward || direction == Vector3.back;
+    }
 }

@@ -1,4 +1,3 @@
-
 namespace Player
 {
     public class PlayerFinishState : PlayerBaseStat

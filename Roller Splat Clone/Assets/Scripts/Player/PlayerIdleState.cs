@@ -1,4 +1,3 @@
-
 namespace Player
 {
     public class PlayerIdleState : PlayerBaseStat
@@ -8,7 +7,6 @@ namespace Player
             stateMachine.EnablePlayerInputs();
         }
         
-
         public override void OnExit(PlayerStateMachine stateMachine)
         {
             stateMachine.DisablePlayerInputs();

@@ -17,25 +17,16 @@ namespace GridSystem
 
         private void OnEnable()
         {
-            Grid.OnLevelCreated += HandleOnLevelCreated;
+            AddListeners();
         }
 
         private void OnDisable()
         {
-            Grid.OnLevelCreated -= HandleOnLevelCreated;
-            
-            if (m_LocalTransformChanged)
-            {
-                ResetLocalPositionAndScale();
-                m_LocalTransformChanged = false;
-            }
-        }
+            RemoveListeners();
 
-        private void HandleOnLevelCreated()
-        {
-            SetLocalPositionAndScale();
+            ResetTileAnimationVars();
         }
-
+        
         public void PlayHitAnim(Direction dir)
         {
             if (m_Lerp != null)
@@ -68,7 +59,7 @@ namespace GridSystem
             Vector2Int dirInVector2Int = Grid.m_Directions[dir];
             Vector3 dirInVector3 = new Vector3(dirInVector2Int.x, 0, dirInVector2Int.y);
             
-            if (dirInVector3 == Vector3.forward || dirInVector3 == Vector3.back)
+            if (Directions.IsDirectionVertical(dir))
             {
                 m_ScaleVector = new Vector3(1, 1, scaleValue);
             }
@@ -88,9 +79,17 @@ namespace GridSystem
             transform.transform.localPosition = pivot + pivotDelta;
             
             transform.localScale = m_ScaleVector;
-            
         }
 
+        private void ResetTileAnimationVars()
+        {
+            if (m_LocalTransformChanged)
+            {
+                ResetLocalPositionAndScale();
+                m_LocalTransformChanged = false;
+            }
+        }
+        
         private void SetLocalPositionAndScale()
         {
             m_LocalTransformChanged = true;
@@ -103,6 +102,21 @@ namespace GridSystem
         {
             transform.localPosition = m_StartLocalPos;
             transform.localScale = m_StartLocalScale;
+        }
+        
+        private void HandleOnLevelCreated()
+        {
+            SetLocalPositionAndScale();
+        }
+        
+        private void AddListeners()
+        {
+            Grid.OnLevelCreated += HandleOnLevelCreated;
+        }
+
+        private void RemoveListeners()
+        {
+            Grid.OnLevelCreated -= HandleOnLevelCreated;
         }
     }
 }
