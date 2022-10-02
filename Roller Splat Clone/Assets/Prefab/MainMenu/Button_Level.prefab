@@ -13,7 +13,6 @@ GameObject:
   - component: {fileID: 3150922413142928025}
   - component: {fileID: 3150922413142928038}
   - component: {fileID: 996843489365707540}
-  - component: {fileID: 968372188}
   m_Layer: 5
   m_Name: Button_Level
   m_TagString: Untagged
@@ -63,15 +62,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.4627451, g: 0.18291815, b: 0, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 1525c76b44fde634fb6e0224f84e2dce, type: 3}
-  m_Type: 3
+  m_Sprite: {fileID: 21300000, guid: 60cfd84ae231a4943b3f0f6cf0dcf409, type: 3}
+  m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 0
@@ -149,22 +148,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   levelText: {fileID: 3150922414961137453}
---- !u!111 &968372188
-Animation:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3150922413142928036}
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Animation: {fileID: 7400000, guid: 6103e21038cb65a4a989b6ec2b168c46, type: 2}
-  m_Animations:
-  - {fileID: 7400000, guid: 6103e21038cb65a4a989b6ec2b168c46, type: 2}
-  m_WrapMode: 0
-  m_PlayAutomatically: 1
-  m_AnimatePhysics: 0
-  m_CullingType: 0
 --- !u!1 &3150922414961137451
 GameObject:
   m_ObjectHideFlags: 0

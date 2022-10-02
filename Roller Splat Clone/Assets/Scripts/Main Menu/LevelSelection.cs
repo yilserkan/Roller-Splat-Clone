@@ -6,7 +6,7 @@ namespace MainMenu
     {
         [SerializeField] private Animation animation;
         
-        private const string m_LevelClose = "Animation_CloseLevelSelect";
+        private const string m_LevelClose = "Animation_CloseLevelSelectv2";
         
         public void _CloseLevelSelection()
         {

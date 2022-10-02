@@ -4,7 +4,61 @@
             "Height": 5,
             "Width": 5,
             "Cycles": 5,
-            "Seed": 301
+            "Seed": 13
+        },
+        {
+            "Height": 5,
+            "Width": 5,
+            "Cycles": 5,
+            "Seed": 696
+        },
+        {
+            "Height": 6,
+            "Width": 6,
+            "Cycles": 6,
+            "Seed": 855
+        },
+        {
+            "Height": 8,
+            "Width": 8,
+            "Cycles": 8,
+            "Seed": 338
+        },
+        {
+            "Height": 10,
+            "Width": 10,
+            "Cycles": 15,
+            "Seed": 375
+        },
+        {
+            "Height": 10,
+            "Width": 10,
+            "Cycles": 15,
+            "Seed": 797
+        },
+        {
+            "Height": 12,
+            "Width": 12,
+            "Cycles": 12,
+            "Seed": 217
+        },
+        {
+            "Height": 16,
+            "Width": 16,
+            "Cycles": 100,
+            "Seed": 711
+        },
+        {
+            "Height": 16,
+            "Width": 16,
+            "Cycles": 100,
+            "Seed": 947
+        },
+        {
+            "Height": 16,
+            "Width": 16,
+            "Cycles": 100,
+            "Seed": 142
         }
     ]
 }
