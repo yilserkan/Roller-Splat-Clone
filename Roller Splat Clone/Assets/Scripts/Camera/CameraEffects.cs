@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Effects;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -27,7 +28,6 @@ namespace CameraSystem
             Vector3 startLocalPos = transform.localPosition;
             
             float elapsedTime = 0;
-
             while (elapsedTime < shakeDuration)
             {
                 float randomX = Random.Range(-1, 1) * shakeMagnitude;
@@ -48,7 +48,16 @@ namespace CameraSystem
         {
             for (int i = 0; i < confettiParticles.Count; i++)
             {
+                confettiParticles[i].gameObject.SetActive(true);
                 confettiParticles[i].Play();
+            }
+        }
+
+        private void DisableConfettiParticles()
+        {
+            for (int i = 0; i < confettiParticles.Count; i++)
+            {
+                confettiParticles[i].gameObject.SetActive(false);
             }
         }
         
@@ -58,14 +67,21 @@ namespace CameraSystem
             PlayConfetti();
         }
         
+        private void HandleOnLoadNextLevel()
+        { 
+            DisableConfettiParticles();
+        }
+
         private void AddListeners()
         {
             GridSystem.Grid.OnLevelFinished += HandleOnLevelFinished;
+            LevelFinishEffects.OnLoadNextLevel += HandleOnLoadNextLevel;
         }
         
         private void RemoveListeners()
         {
             GridSystem.Grid.OnLevelFinished -= HandleOnLevelFinished;
+            LevelFinishEffects.OnLoadNextLevel -= HandleOnLoadNextLevel;
         }
     }
 }
