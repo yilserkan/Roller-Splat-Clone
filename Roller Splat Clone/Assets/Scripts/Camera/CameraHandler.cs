@@ -1,3 +1,4 @@
+using System;
 using LevelSystem;
 using UnityEngine;
 
@@ -13,6 +14,9 @@ namespace CameraSystem
         private float m_DefaultAngle = 90f;
         private int m_Height;
         private int m_Width;
+        private float m_AspectRatio = 9f / 16f;
+
+        public static event Action<Vector3> OnCameraPositionFound;
         
         private void OnEnable()
         {
@@ -49,16 +53,19 @@ namespace CameraSystem
             
             zPosition = (float)m_Height / 2;
             zPosition -= .5f;
-
-            if (m_Width >= m_Height)
+            
+        
+            
+            if (m_Width > m_Height * m_AspectRatio)
             {
-                yPosition = m_Width * 2;
+                yPosition = (float)m_Width / 9f * 16f;
             }
             else
             {
-                yPosition = m_Height * 1.25f;
+                yPosition = (float)m_Height;
             }
             
+            OnCameraPositionFound?.Invoke(new Vector3(xPosition, yPosition, zPosition));
         }
 
         private void SetCameraRotation(float yPosition, ref float zPosition)
