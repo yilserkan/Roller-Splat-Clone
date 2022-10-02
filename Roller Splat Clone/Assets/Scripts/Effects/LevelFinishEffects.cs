@@ -24,32 +24,32 @@ namespace Effects
         {
             AddListeners();
         }
-
+        
+        private void Start()
+        {
+            PlayLevelResetAnimation();
+        }
         private void OnDestroy()
         {
             RemoveListeners();
         }
-
-        private void Start()
-        {
-            animation.Play(m_PlayResetLevelFinish);
-            gameObject.SetActive(false);
-        }
-
         public void _TapToContinue()
         {
             OnResetTiles?.Invoke();
             OnLoadNextLevel?.Invoke();
-            animation.Play(m_PlayResetLevelFinish);
-            gameObject.SetActive(false);
+            PlayLevelResetAnimation();
         }
         
         private void PlayLevelFinishAnimation()
         {
-            gameObject.SetActive(true);
             animation.Play(m_PlayLevelFinish);
         }
 
+        private void PlayLevelResetAnimation()
+        {
+            animation.Play(m_PlayResetLevelFinish);
+        }
+        
         private void ChangeImageColors(Color color)
         {
             for (int i = 0; i < images.Count; i++)
@@ -75,8 +75,7 @@ namespace Effects
         
         private void HandleOnResetLevel()
         {
-            animation.Play(m_PlayResetLevelFinish);
-            gameObject.SetActive(false);
+            PlayLevelResetAnimation();
         }
         
         private void AddListeners()
