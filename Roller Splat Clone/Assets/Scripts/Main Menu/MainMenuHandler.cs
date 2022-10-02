@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Json;
 using LevelSystem;
@@ -13,12 +14,22 @@ namespace MainMenu
 
         private List<Level> m_Levels;
 
-        private void Start()
+        private void OnEnable()
+        {
+            AddListeners();
+        }
+
+        private void OnDisable()
+        {
+            RemoveListeners();
+        }
+
+        private void HandleOnJsonInitialized()
         {
             ReadLevelsFromJson();
             CreateLevelButtons();
         }
-
+        
         private void ReadLevelsFromJson()
         {
             m_Levels = JSONSaveSystem.ReadFromJson<Level>();
@@ -41,6 +52,16 @@ namespace MainMenu
         public void _Generate()
         {
             SceneChanger.LoadScene(SceneChanger.LevelGeneratorScene);
+        }
+
+        private void AddListeners()
+        {
+            JsonInitializer.OnJsonInitialized += HandleOnJsonInitialized;
+        }
+
+        private void RemoveListeners()
+        {
+            JsonInitializer.OnJsonInitialized -= HandleOnJsonInitialized;
         }
     }
 }

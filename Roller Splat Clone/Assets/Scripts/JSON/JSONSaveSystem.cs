@@ -18,6 +18,13 @@ namespace Json
             string content = JsonHelper.ToJson(saveData, prettyPrint, dataInJson);
             WriteFile(GetPath(), content);
         }
+        
+        public static void SaveToJSON<T>(List<T> saveData, bool prettyPrint)
+        {
+            List<T> dataInJson = ReadFromJson<T>();
+            string content = JsonHelper.ToJson(saveData, prettyPrint, dataInJson);
+            WriteFile(GetPath(), content);
+        }
 
         public static List<T> ReadFromJson<T>()
         {
@@ -49,11 +56,18 @@ namespace Json
             fileStream.Close();
         }
 
-        public static List<Level> ReadLevels()
+        private static void ResetDataInJson()
         {
+            string content = JsonHelper.ResetJson<Level>();
+            WriteFile(GetPath(),content);
+        }
+        
+        public static void InitializeLevels()
+        {
+            ResetDataInJson();
             var levels = Resources.Load<TextAsset>(resourcesFilename);
             List<Level> levelsList = JsonHelper.FromJson<Level>(levels.ToString()).ToList();
-            return levelsList;
+            SaveToJSON(levelsList,true);
         }
 
         public static string ReadFile(string path)

@@ -18,11 +18,27 @@ namespace Json
          return JsonUtility.ToJson(wrapper);
       }
 
+      public static string ResetJson<T>()
+      {
+         Wrapper<T> wrapper = new Wrapper<T>();
+         return JsonUtility.ToJson(wrapper);
+      }
+
       public static string ToJson<T>(T element, bool prettyPrint, List<T> dataInJson)
       {
          Wrapper<T> wrapper = new Wrapper<T>();
          
          dataInJson.Add(element);
+         wrapper.Levels = dataInJson.ToArray();
+
+         return JsonUtility.ToJson(wrapper, prettyPrint);
+      }
+      
+      public static string ToJson<T>(List<T> element, bool prettyPrint, List<T> dataInJson)
+      {
+         Wrapper<T> wrapper = new Wrapper<T>();
+         
+         dataInJson.AddRange(element);
          wrapper.Levels = dataInJson.ToArray();
 
          return JsonUtility.ToJson(wrapper, prettyPrint);
