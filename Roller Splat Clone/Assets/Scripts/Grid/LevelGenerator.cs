@@ -60,10 +60,8 @@ namespace GridSystem
                 
                 Vector2Int newCoords = NOT_FOUND;
                 newCoords = TryFindPath(currentTileCoordinates ,ref newCoords);
-
                 
-                
-                InitializeStartDirection(ref startDirection, ref startDirectionInitialized, newCoords);
+                InitializeStartTile(ref startDirection, ref startDirectionInitialized, startTileCoordinates);
                 SetPrevoiusDirection();
                 
                 if (!PathFound(newCoords) && !triedOppositeStartDirection && m_UseBothAxisOnStartingPoint)
@@ -107,62 +105,6 @@ namespace GridSystem
 
             return newCoords;
         }
-
-        private void TryOtherStartPointAxis(Vector2Int startTileCoordinates, Direction startDirection, ref Vector2Int newCoords)
-        {
-            Direction newDir = Directions.GetRandomDirFromOtherAxis(startDirection);
-            newCoords = TryDirection(startTileCoordinates,newDir);
-
-            if (!PathFound(newCoords))
-            {
-                newDir = Directions.FindOppositeDirection(newDir);
-                newCoords = TryDirection(startTileCoordinates, newDir);
-            }
-                    
-            m_CurrentDirection = newDir;
-        }
-        
-        private void InitializeStartDirection(ref Direction startDirection, ref bool startDirectionInitialized, Vector2Int coords)
-        {
-            if (!startDirectionInitialized)
-            {
-                startDirection = m_CurrentDirection;
-                startDirectionInitialized = true;
-                
-                Direction randomDir = Directions.GetRandomDirFromOtherAxis(m_CurrentDirection);
-                m_Grid[coords].Neigbors[randomDir].IsControlBlock = true;
-            }
-        }
-
-        private void SetPrevoiusDirection()
-        {
-            m_PrevDirectionInitialized = true;
-            m_PrevDirection = m_CurrentDirection;
-        }
-        
-        private Direction GetDirFromOtherAxis(Direction currentDirection)
-        {
-            Direction direction;
-            if (m_PrevDirectionInitialized)
-            {
-                direction = m_PrevDirection;
-            }
-            else
-            {
-                direction = Directions.GetRandomDirFromOtherAxis(currentDirection);
-            }
-
-            return direction;
-        }
-
-        private Vector2Int GetRandomStartPosition()
-        {
-            int randomX = Random.Range(m_XTileStartIndex, m_XTileEndIndex);
-            int randomY = Random.Range(m_YTileStartIndex, m_YTileEndIndex);
-            
-            return new Vector2Int(randomX, randomY);
-        }
-        
         
         public Vector2Int TryDirection(Vector2Int tileCoordinates,Direction dir)
         {
@@ -227,7 +169,32 @@ namespace GridSystem
             return  curTile.Coordinates;
             
         }
+        
+        private void TryOtherStartPointAxis(Vector2Int startTileCoordinates, Direction startDirection, ref Vector2Int newCoords)
+        {
+            Direction newDir = Directions.GetRandomDirFromOtherAxis(startDirection);
+            newCoords = TryDirection(startTileCoordinates,newDir);
 
+            if (!PathFound(newCoords))
+            {
+                newDir = Directions.FindOppositeDirection(newDir);
+                newCoords = TryDirection(startTileCoordinates, newDir);
+            }
+                    
+            m_CurrentDirection = newDir;
+        }
+        
+        private void InitializeStartTile(ref Direction startDirection, ref bool startDirectionInitialized, Vector2Int coords)
+        {
+            if (!startDirectionInitialized)
+            {
+                startDirection = m_CurrentDirection;
+                startDirectionInitialized = true;
+                
+                BlockRandomDirFromOtherAxis(coords);
+            }
+        }
+        
         private void UnblockPath(List<Tile> path)
         {
             foreach (var tile in path)
@@ -269,8 +236,45 @@ namespace GridSystem
             
             return possibleEndPoints;
         }
-        
+        private void SetPrevoiusDirection()
+        {
+            m_PrevDirectionInitialized = true;
+            m_PrevDirection = m_CurrentDirection;
+        }
 
+        private void BlockRandomDirFromOtherAxis(Vector2Int coords)
+        {
+            Direction randomDir = Directions.GetRandomDirFromOtherAxis(m_CurrentDirection);
+            
+            Tile tile =  m_Grid[coords].Neigbors[randomDir];
+            
+           // tile.IsControlBlock = true;
+           tile.SetControlBlock(m_CycleIndex);
+        }
+        
+        private Direction GetDirFromOtherAxis(Direction currentDirection)
+        {
+            Direction direction;
+            if (m_PrevDirectionInitialized)
+            {
+                direction = m_PrevDirection;
+            }
+            else
+            {
+                direction = Directions.GetRandomDirFromOtherAxis(currentDirection);
+            }
+
+            return direction;
+        }
+
+        private Vector2Int GetRandomStartPosition()
+        {
+            int randomX = Random.Range(m_XTileStartIndex, m_XTileEndIndex);
+            int randomY = Random.Range(m_YTileStartIndex, m_YTileEndIndex);
+            
+            return new Vector2Int(randomX, randomY);
+        }
+        
         private void EnableControlBlocks(Vector2Int startCoords,Vector2Int endCoords, Direction dir)
         {
             Tile endTileNeighbor = m_Grid[endCoords].Neigbors[dir];
