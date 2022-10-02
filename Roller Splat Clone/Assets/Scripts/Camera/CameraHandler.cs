@@ -1,8 +1,5 @@
 using LevelSystem;
-using Player;
 using UnityEngine;
-using PlayerSettings = UnityEditor.PlayerSettings;
-
 
 namespace CameraSystem
 {
@@ -14,7 +11,6 @@ namespace CameraSystem
         [SerializeField] private float cameraLookAngle;
 
         private float m_DefaultAngle = 90f;
-        
         private int m_Height;
         private int m_Width;
         
@@ -32,22 +28,18 @@ namespace CameraSystem
         {
             Application.targetFrameRate = 60;
             Camera.main.aspect = 9f/16f;
-            PlayerSettings.accelerometerFrequency = 0;
         }
-
+        
         private void SetCameraPosition()
         {
             float xPosition = 0, yPosition = 0, zPosition = 0 ;
-            
             FindNewPosition(ref xPosition, ref yPosition, ref zPosition);
             
             SetCameraRotation(yPosition, ref zPosition);
 
             Vector3 newPos = new Vector3(xPosition, yPosition, zPosition);
             Quaternion newRot = Quaternion.Euler(cameraLookAngle, 0,0);
-            
             cameraParent.SetPositionAndRotation(newPos,newRot);
-            
         }
 
         private void FindNewPosition(ref float xPosition, ref float yPosition, ref float zPosition )
